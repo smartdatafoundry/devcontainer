@@ -6,9 +6,9 @@
 	"image": "mcr.microsoft.com/devcontainers/base:noble",
 
 	// TRE mount points
-	"mounts": [
-		"source=/safe_data,target=/safe_data,type=bind,consistency=cached"
-	],
+	// "mounts": [
+	// 	"source=/safe_data,target=/safe_data,type=bind,consistency=cached"
+	// ],
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
