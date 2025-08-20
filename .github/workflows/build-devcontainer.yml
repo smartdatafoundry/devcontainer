@@ -54,7 +54,7 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           imageName: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          imageTag: ${{ steps.meta.outputs.tags }}
+          imageTag: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
           cacheFrom: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           push: filter
           refFilterForPush: refs/heads/main
