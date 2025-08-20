@@ -16,7 +16,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: smartdatafoundry/devcontainer-python
 
 jobs:
   build-and-publish:
@@ -54,7 +54,7 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           imageName: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          imageTag: latest
+          imageTag: ${{ steps.meta.outputs.tags }}
           cacheFrom: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           push: filter
           refFilterForPush: refs/heads/main
@@ -87,10 +87,14 @@ jobs:
           echo "✅ Dev container built and published successfully!"
           echo "📦 Registry: ${{ env.REGISTRY }}"
           echo "🏷️ Image: ${{ env.IMAGE_NAME }}"
-          echo "🆔 Tags: latest"
+          echo "🆔 Tags: ${{ steps.meta.outputs.tags }}"
+          echo "📝 Labels: ${{ steps.meta.outputs.labels }}"
           echo ""
           echo "To use this dev container:"
           echo "1. Reference it in your devcontainer.json:"
-          echo '   "image": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"'
+          echo '   "image": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:<tag>"'
           echo "2. Or use it directly with Docker:"
-          echo "   docker run --rm -it ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "   docker run --rm -it ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:<tag>"
+          echo ""
+          echo "Available tags:"
+          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/   - /'

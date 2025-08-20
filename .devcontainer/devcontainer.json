@@ -3,19 +3,15 @@
 {
 	"name": "Python Development Environment",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:noble",
-
-	// TRE mount points
-	// "mounts": [
-	// 	"source=/safe_data,target=/safe_data,type=bind,consistency=cached"
-	// ],
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VSCODE_COMMIT": "7adae6a56e34cb64d08899664b814cf620465925"
+		}
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
-		"ghcr.io/devcontainers/features/git:1": {
-			"ppa": true,
-			"version": "os-provided"
-		},
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
 			"installJupyterlab": false,
@@ -46,13 +42,10 @@
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
-			"extensions": [
-				"Continue.continue",
-				"ms-python.black-formatter",
-				"ms-toolsai.jupyter",
-				"yzhang.markdown-all-in-one",
-				"mechatroner.rainbow-csv"
-			]
+			"settings": {
+				"extensions.autoUpdate": false,
+				"extensions.autoCheckUpdates": false
+			}
 		}
 	},
 
