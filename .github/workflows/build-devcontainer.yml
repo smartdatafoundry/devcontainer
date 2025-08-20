@@ -16,7 +16,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: smartdatafoundry/devcontainer-python
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-publish:
@@ -50,11 +50,19 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
 
+      - name: Extract tag names only
+        id: tags
+        run: |
+          # Extract just the tag portions (everything after the last colon)
+          TAGS=$(echo '${{ steps.meta.outputs.tags }}' | sed 's/.*://' | tr '\n' ',' | sed 's/,$//')
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+          echo "Extracted tags: $TAGS"
+
       - name: Build and publish dev container
         uses: devcontainers/ci@v0.3
         with:
           imageName: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          imageTag: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
+          imageTag: ${{ steps.tags.outputs.tags }}
           cacheFrom: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           push: filter
           refFilterForPush: refs/heads/main
