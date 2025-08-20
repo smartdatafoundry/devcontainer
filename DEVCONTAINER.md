@@ -4,9 +4,21 @@ This repository contains a development container configuration optimized for Pyt
 
 ## 📦 Published Container
 
-The dev container is automatically built and published to:
+The dev container is automatically built and published with multiple tags:
+
 - **Registry**: `ghcr.io`
-- **Image**: `ghcr.io/smartdatafoundry/devcontainer-python:latest`
+- **Base Image**: `ghcr.io/smartdatafoundry/devcontainer-python`
+- **Available Tags**:
+  - `latest` - Latest stable build from main branch
+  - `main` - Latest build from main branch  
+  - `main-<commit-sha>` - Specific commit builds from main branch
+  - `pr-<number>` - Pull request builds for testing
+
+### Choosing the Right Tag
+
+- **For production/stable use**: `ghcr.io/smartdatafoundry/devcontainer-python:latest`
+- **For reproducible builds**: `ghcr.io/smartdatafoundry/devcontainer-python:main-abc1234` 
+- **For testing PR changes**: `ghcr.io/smartdatafoundry/devcontainer-python:pr-123`
 
 ## 🚀 Quick Start
 
@@ -34,8 +46,11 @@ The dev container is automatically built and published to:
 ### Using with Docker
 
 ```bash
-# Pull the latest image
+# Pull the latest stable image
 docker pull ghcr.io/smartdatafoundry/devcontainer-python:latest
+
+# Or pull a specific commit version
+docker pull ghcr.io/smartdatafoundry/devcontainer-python:main-abc1234
 
 # Run interactively
 docker run --rm -it ghcr.io/smartdatafoundry/devcontainer-python:latest bash
@@ -48,11 +63,12 @@ docker run --rm -it -v $(pwd):/workspace ghcr.io/smartdatafoundry/devcontainer-p
 
 This dev container includes:
 
-- **Base**: Ubuntu Noble (24.04) with non-root user setup
-- **Python**: System Python with pip and development tools
+- **Base**: Ubuntu Noble (24.04) via Microsoft's `mcr.microsoft.com/devcontainers/base:noble`
+- **Python**: System Python with pip and development tools (via devcontainer feature)
 - **Git**: Latest version with configuration support
-- **Shell**: Zsh with Oh My Zsh configuration
-- **Quarto**: For document publishing and data science workflows
+- **Shell**: Zsh with Oh My Zsh configuration (via common-utils feature)
+- **Quarto**: For document publishing and data science workflows (latest version)
+- **VS Code Server**: Pre-installed for immediate development
 - **VS Code Extensions**:
   - Continue (AI assistant)
   - Black formatter for Python
@@ -66,17 +82,26 @@ The container is automatically built and published using GitHub Actions:
 
 ### Build Workflow (`build-devcontainer.yml`)
 - **Triggers**: Push to main branch, PRs, manual dispatch
-- **Features**: Single platform (linux/amd64), caching, validation tests
-- **Publishing**: Only publishes from main branch to `ghcr.io/smartdatafoundry/devcontainer-python:latest`
+- **Features**: Single platform (linux/amd64), intelligent caching, comprehensive validation tests
+- **Publishing**: Multi-tag publishing with `latest`, `main`, `main-<sha>`, and `pr-<number>` tags
+- **Testing**: Validates Python, Git, Zsh, and Quarto installations
 
 ## 📁 Repository Structure
 
 ```
 ├── .devcontainer/
-│   └── devcontainer.json          # Dev container configuration
+│   ├── devcontainer.json          # Dev container configuration
+│   ├── Dockerfile                 # Custom Docker build
+│   └── vscode-init/               # VS Code server and extensions setup
+│       ├── 00-install-vscode-server.sh
+│       ├── 01-install-vscode-extensions.sh
+│       └── vscode-extensions.txt
 ├── .github/workflows/
 │   └── build-devcontainer.yml     # Build and publish workflow
-└── README.md                      # This file
+├── examples/
+│   └── USAGE.md                   # Usage examples
+├── DEVCONTAINER.md                 # Detailed documentation
+└── README.md                      # Overview and quick start
 ```
 
 ## 🔧 Customization
@@ -92,6 +117,29 @@ To customize this dev container for your needs:
 4. Push changes - the container will be built automatically
 
 ## 🏗️ Local Development
+## 🔄 Automated Build Process
+
+The container images are built and published automatically using GitHub Actions with intelligent tagging:
+
+### Build Triggers
+- **Main Branch Pushes**: Builds when `.devcontainer/**` or workflow files change
+- **Pull Requests**: Builds for testing when devcontainer files are modified
+- **Manual Dispatch**: On-demand builds via GitHub Actions workflow
+
+### Build Process
+1. **Container Build**: Uses `devcontainers/ci` action for proper dev container support
+2. **Testing**: Validates Python, Git, and tool installations
+3. **Tag Extraction**: Processes metadata to create appropriate image tags
+4. **Publishing**: Pushes to GitHub Container Registry with all generated tags
+
+### Tag Strategy
+The build system creates multiple tags from a single build:
+- `latest`: Only for main branch, represents the most stable version
+- `main`: Latest commit from main branch
+- `main-<sha>`: Specific commit SHA for reproducible builds
+- `pr-<number>`: Pull request builds for testing changes
+
+## 🧪 Testing
 
 To test the dev container locally:
 
@@ -115,10 +163,6 @@ devcontainer exec --workspace-folder . bash
 5. Submit a pull request
 
 The GitHub Action will automatically test your changes when you submit a PR.
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ---
 

@@ -6,10 +6,17 @@ Base Dev Container development environment for working with Python
 
 ## 📦 Published Container
 
-This dev container is automatically built and published to GitHub Container Registry:
+This dev container is automatically built and published to GitHub Container Registry with multiple tags:
 
-- **Image**: `ghcr.io/smartdatafoundry/devcontainer-python:latest`
-- **Registry**: GitHub Container Registry (GHCR)
+- **Registry**: GitHub Container Registry (GHCR)  
+- **Base Image**: `ghcr.io/smartdatafoundry/devcontainer-python`
+- **Available Tags**:
+  - `latest` - Latest stable build from main branch
+  - `main` - Latest build from main branch  
+  - `main-<commit-sha>` - Specific commit builds from main branch
+  - `pr-<number>` - Pull request builds for testing
+
+**Recommended**: Use `latest` for stable deployments or `main-<commit-sha>` for reproducible builds.
 
 ## 🚀 Quick Start
 
@@ -38,17 +45,29 @@ Add this to your `.devcontainer/devcontainer.json`:
 
 ## 🛠️ What's Included
 
-- **Base**: Ubuntu 24.04 (Noble) 
-- **Python**: System Python with pip and development tools
+- **Base**: Ubuntu 24.04 (Noble) via Microsoft's devcontainers base image
+- **Python**: System Python with development tools (via devcontainer feature)
 - **Git**: Latest version with configuration support
-- **Shell**: Zsh with Oh My Zsh
-- **Quarto**: Document publishing platform
-- **VS Code Extensions**: Python development essentials
+- **Shell**: Zsh with Oh My Zsh (via common-utils feature)
+- **Quarto**: Document publishing platform (latest version)
+- **VS Code Extensions**:
+  - Continue (AI coding assistant)
+  - Python Black formatter
+  - Jupyter notebook support
+  - Markdown All in One
+  - Rainbow CSV
+- **VS Code Server**: Pre-installed for immediate development
 
 ## 🔄 Automated Builds
 
-The container is built automatically:
-- On pushes to main branch
-- On pull requests (for testing)
-- Manual workflow dispatch
-- Single platform (linux/amd64) for simplicity and speed
+The container is built automatically with smart tagging:
+
+- **Main Branch Pushes**: Creates `latest`, `main`, and `main-<commit-sha>` tags
+- **Pull Requests**: Creates `pr-<number>` tags for testing
+- **Manual Dispatch**: Available for on-demand builds
+- **Platform**: linux/amd64 optimized for development speed
+
+### Tag Strategy
+- Use `latest` for the most recent stable release
+- Use `main-<commit-sha>` when you need reproducible builds
+- Use `pr-<number>` tags to test specific pull request changes
