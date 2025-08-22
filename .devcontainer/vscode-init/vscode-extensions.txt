@@ -5,3 +5,4 @@ ms-python.black-formatter
 ms-toolsai.jupyter
 yzhang.markdown-all-in-one
 mechatroner.rainbow-csv
+marimo-team.vscode-marimo

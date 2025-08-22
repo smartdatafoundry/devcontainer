@@ -14,6 +14,7 @@
 	"features": {
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
+			"toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,poetry,marimo[recommended]",
 			"installJupyterlab": false,
 			"version": "os-provided"
 		},
