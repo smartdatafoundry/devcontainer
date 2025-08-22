@@ -50,10 +50,12 @@ Add this to your `.devcontainer/devcontainer.json`:
 - **Git**: Latest version with configuration support
 - **Shell**: Zsh with Oh My Zsh (via common-utils feature)
 - **Quarto**: Document publishing platform (latest version)
+- **Marimo**: Markdown presentation tool, alternative to Jupyter Notebooks
 - **VS Code Extensions**:
   - Continue (AI coding assistant)
   - Python Black formatter
   - Jupyter notebook support
+  - Marimo
   - Markdown All in One
   - Rainbow CSV
 - **VS Code Server**: Pre-installed for immediate development
