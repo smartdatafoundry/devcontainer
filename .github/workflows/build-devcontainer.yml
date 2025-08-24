@@ -24,6 +24,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      pull-requests: write    # For PR comments from security scan
+      actions: write         # For uploading artifacts from security scan
       
     steps:
       - name: Checkout repository
