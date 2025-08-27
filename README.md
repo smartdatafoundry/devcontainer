@@ -1,6 +1,10 @@
+<div align="center">
+  <img src="assets/ouroboros-chicken-logo.png" alt="devcontainer-python logo" width="200" height="200">
+</div>
+
 # devcontainer-python
 
-Base Dev Container development environment for working with Python
+Container to support Python development that comes with baked in support for the Visual Studio Code Dev Container extension, additionally includes supporting tooling and a rich set of IDE extensions.
 
 [![Build and Publish Dev Container](https://github.com/smartdatafoundry/devcontainer-python/actions/workflows/build-devcontainer.yml/badge.svg)](https://github.com/smartdatafoundry/devcontainer-python/actions/workflows/build-devcontainer.yml)
 

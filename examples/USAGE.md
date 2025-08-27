@@ -50,7 +50,6 @@ For reproducible builds, pin to a specific commit:
   },
   "postCreateCommand": "pip install -r requirements.txt"
 }
-}
 ```
 
 ## Example 3: With Additional Features
@@ -78,8 +77,6 @@ For reproducible builds, pin to a specific commit:
   "postCreateCommand": [
     "pip install --upgrade pip",
     "pip install -r requirements.txt"
-  ]
-}
   ]
 }
 ```

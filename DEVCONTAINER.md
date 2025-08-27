@@ -68,6 +68,7 @@ This dev container includes:
 - **Git**: Latest version with configuration support
 - **Shell**: Zsh with Oh My Zsh configuration (via common-utils feature)
 - **Quarto**: For document publishing and data science workflows (latest version)
+- **Marimo**: Markdown presentation tool, alternative to Jupyter Notebooks (latest version)
 - **VS Code Server**: Pre-installed for immediate development
 - **VS Code Extensions**:
   - Continue (AI assistant)
@@ -95,6 +96,7 @@ The container is automatically built and published using GitHub Actions:
 │   └── vscode-init/               # VS Code server and extensions setup
 │       ├── 00-install-vscode-server.sh
 │       ├── 01-install-vscode-extensions.sh
+|       ├── 02-download-container-tools-extension.sh
 │       └── vscode-extensions.txt
 ├── .github/workflows/
 │   └── build-devcontainer.yml     # Build and publish workflow
@@ -163,6 +165,10 @@ devcontainer exec --workspace-folder . bash
 5. Submit a pull request
 
 The GitHub Action will automatically test your changes when you submit a PR.
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
 
 ---
 

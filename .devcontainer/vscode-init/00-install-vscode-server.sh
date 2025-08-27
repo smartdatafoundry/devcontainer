@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 set -e
 
 # VS Code Server installation script
