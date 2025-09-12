@@ -11,6 +11,11 @@ on:
         required: false
         type: string
         default: ${{ github.repository }}
+      trivy-exit-code:
+        required: false
+        type: string
+        default: '0'
+        description: 'Exit code for Trivy security scan (0=non-blocking, 1=blocking)'
 
 jobs:
   build-and-push-image:
@@ -42,8 +47,42 @@ jobs:
             type=ref,event=pr
             type=ref,event=tag
 
-      - name: Build and push Docker image
+      - name: Build Container
+        id: build
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: .
+          file: ${{ inputs.dockerfile }}
+          push: false
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Get first tag for scanning
+        id: first-tag
+        run: |
+          FIRST_TAG=$(echo '${{ steps.meta.outputs.tags }}' | head -n1)
+          echo "tag=$FIRST_TAG" >> $GITHUB_OUTPUT
+          echo "Using tag for scan: $FIRST_TAG"
+
+      - name: Security Scan (Trivy)
+        id: security-scan
+        uses: smartdatafoundry/trivy-security-scan@v1.0.0
+        with:
+          image-ref: ${{ steps.first-tag.outputs.tag }}
+          registry: ghcr.io
+          severity: 'CRITICAL,HIGH'
+          detailed-severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+          ignore-unfixed: 'true'
+          exit-code: ${{ inputs.trivy-exit-code }}
+          artifact-name: 'security-scan-results'
+          artifact-retention-days: '30'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          post-pr-comment: 'true'
+
+      - name: Push Container
         id: push
+        if: success()
         uses: docker/build-push-action@v6.18.0
         with:
           context: .
