@@ -1,19 +1,19 @@
 <div align="center">
-  <img src="assets/ouroboros-chicken-logo.png" alt="devcontainer-python logo" width="200" height="200">
+  <img src="assets/ouroboros-chicken-logo.png" alt="devcontainer logo" width="200" height="200">
 </div>
 
-# devcontainer-python
+# devcontainer
 
 Container to support Python development that comes with baked in support for the Visual Studio Code Dev Container extension, additionally includes supporting tooling and a rich set of IDE extensions.
 
-[![Build and Publish Dev Container](https://github.com/smartdatafoundry/devcontainer-python/actions/workflows/build-devcontainer.yml/badge.svg)](https://github.com/smartdatafoundry/devcontainer-python/actions/workflows/build-devcontainer.yml)
+[![Build and Publish Dev Container](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml/badge.svg)](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml)
 
 ## 📦 Published Container
 
 This dev container is automatically built and published to GitHub Container Registry with multiple tags:
 
 - **Registry**: GitHub Container Registry (GHCR)  
-- **Base Image**: `ghcr.io/smartdatafoundry/devcontainer-python`
+- **Base Image**: `ghcr.io/smartdatafoundry/devcontainer`
 - **Available Tags**:
   - `latest` - Latest stable build from main branch
   - `main` - Latest build from main branch  
@@ -31,7 +31,7 @@ Add this to your `.devcontainer/devcontainer.json`:
 ```json
 {
   "name": "Python Development",
-  "image": "ghcr.io/smartdatafoundry/devcontainer-python:latest"
+  "image": "ghcr.io/smartdatafoundry/devcontainer:latest"
 }
 ```
 

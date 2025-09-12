@@ -17,7 +17,7 @@ Create a `.devcontainer/devcontainer.json` in your project:
 ```json
 {
   "name": "My Python Project",
-  "image": "ghcr.io/smartdatafoundry/devcontainer-python:latest",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:latest",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -38,7 +38,7 @@ For reproducible builds, pin to a specific commit:
 ```json
 {
   "name": "My Python Project - Reproducible",
-  "image": "ghcr.io/smartdatafoundry/devcontainer-python:main-abc1234",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:main-abc1234",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -57,7 +57,7 @@ For reproducible builds, pin to a specific commit:
 ```json
 {
   "name": "Advanced Python Development",
-  "image": "ghcr.io/smartdatafoundry/devcontainer-python:latest",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:latest",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
@@ -86,7 +86,7 @@ For reproducible builds, pin to a specific commit:
 ```json
 {
   "name": "Python with Environment",
-  "image": "ghcr.io/smartdatafoundry/devcontainer-python:latest",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:latest",
   "containerEnv": {
     "PYTHONPATH": "/workspace",
     "ENVIRONMENT": "development"
@@ -105,7 +105,7 @@ Create a `docker-compose.yml`:
 version: '3.8'
 services:
   devcontainer:
-    image: ghcr.io/smartdatafoundry/devcontainer-python:latest
+    image: ghcr.io/smartdatafoundry/devcontainer:latest
     volumes:
       - .:/workspace
       - /var/run/docker.sock:/var/run/docker.sock
@@ -132,14 +132,14 @@ Then create `.devcontainer/devcontainer.json`:
 
 | Use Case | Recommended Tag | Example | Benefits |
 |----------|----------------|---------|----------|
-| **Development** | `latest` | `ghcr.io/smartdatafoundry/devcontainer-python:latest` | Always up-to-date, stable |
-| **Production/CI** | `main-<sha>` | `ghcr.io/smartdatafoundry/devcontainer-python:main-abc1234` | Reproducible, immutable |
-| **Testing PRs** | `pr-<number>` | `ghcr.io/smartdatafoundry/devcontainer-python:pr-42` | Test specific changes |
-| **Latest Main** | `main` | `ghcr.io/smartdatafoundry/devcontainer-python:main` | Latest main branch |
+| **Development** | `latest` | `ghcr.io/smartdatafoundry/devcontainer:latest` | Always up-to-date, stable |
+| **Production/CI** | `main-<sha>` | `ghcr.io/smartdatafoundry/devcontainer:main-abc1234` | Reproducible, immutable |
+| **Testing PRs** | `pr-<number>` | `ghcr.io/smartdatafoundry/devcontainer:pr-42` | Test specific changes |
+| **Latest Main** | `main` | `ghcr.io/smartdatafoundry/devcontainer:main` | Latest main branch |
 
 ### Finding Available Tags
 
-Visit the [GitHub Container Registry page](https://github.com/smartdatafoundry/devcontainer-python/pkgs/container/devcontainer-python) to see all available tags and their creation dates.
+Visit the [GitHub Container Registry page](https://github.com/smartdatafoundry/devcontainer/pkgs/container/devcontainer) to see all available tags and their creation dates.
 
 ### Best Practices
 
@@ -152,7 +152,7 @@ Visit the [GitHub Container Registry page](https://github.com/smartdatafoundry/d
 {
   "name": "My Production App",
   // Using specific commit for reproducible production builds
-  "image": "ghcr.io/smartdatafoundry/devcontainer-python:main-abc1234",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:main-abc1234",
   "customizations": {
     "vscode": {
       "extensions": ["ms-python.python"]

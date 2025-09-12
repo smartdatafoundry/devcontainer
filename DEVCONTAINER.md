@@ -7,7 +7,7 @@ This repository contains a development container configuration optimized for Pyt
 The dev container is automatically built and published with multiple tags:
 
 - **Registry**: `ghcr.io`
-- **Base Image**: `ghcr.io/smartdatafoundry/devcontainer-python`
+- **Base Image**: `ghcr.io/smartdatafoundry/devcontainer`
 - **Available Tags**:
   - `latest` - Latest stable build from main branch
   - `main` - Latest build from main branch  
@@ -16,9 +16,9 @@ The dev container is automatically built and published with multiple tags:
 
 ### Choosing the Right Tag
 
-- **For production/stable use**: `ghcr.io/smartdatafoundry/devcontainer-python:latest`
-- **For reproducible builds**: `ghcr.io/smartdatafoundry/devcontainer-python:main-abc1234` 
-- **For testing PR changes**: `ghcr.io/smartdatafoundry/devcontainer-python:pr-123`
+- **For production/stable use**: `ghcr.io/smartdatafoundry/devcontainer:latest`
+- **For reproducible builds**: `ghcr.io/smartdatafoundry/devcontainer:main-abc1234` 
+- **For testing PR changes**: `ghcr.io/smartdatafoundry/devcontainer:pr-123`
 
 ## 🚀 Quick Start
 
@@ -29,7 +29,7 @@ The dev container is automatically built and published with multiple tags:
 ```json
 {
   "name": "Python Development",
-  "image": "ghcr.io/smartdatafoundry/devcontainer-python:latest",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:latest",
   "features": {},
   "customizations": {
     "vscode": {
@@ -47,16 +47,16 @@ The dev container is automatically built and published with multiple tags:
 
 ```bash
 # Pull the latest stable image
-docker pull ghcr.io/smartdatafoundry/devcontainer-python:latest
+docker pull ghcr.io/smartdatafoundry/devcontainer:latest
 
 # Or pull a specific commit version
-docker pull ghcr.io/smartdatafoundry/devcontainer-python:main-abc1234
+docker pull ghcr.io/smartdatafoundry/devcontainer:main-abc1234
 
 # Run interactively
-docker run --rm -it ghcr.io/smartdatafoundry/devcontainer-python:latest bash
+docker run --rm -it ghcr.io/smartdatafoundry/devcontainer:latest bash
 
 # Mount your project directory
-docker run --rm -it -v $(pwd):/workspace ghcr.io/smartdatafoundry/devcontainer-python:latest
+docker run --rm -it -v $(pwd):/workspace ghcr.io/smartdatafoundry/devcontainer:latest
 ```
 
 ## 🛠️ What's Included
