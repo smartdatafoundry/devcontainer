@@ -11,7 +11,7 @@ on:
         required: false
         type: string
         default: ${{ github.repository }}
-      trivy-exit-code:
+      fail-on-security:
         required: false
         type: string
         default: '0'
@@ -74,7 +74,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
           detailed-severity: 'CRITICAL,HIGH,MEDIUM,LOW'
           ignore-unfixed: 'true'
-          exit-code: ${{ inputs.trivy-exit-code }}
+          exit-code: ${{ inputs.fail-on-security }}
           artifact-name: 'security-scan-results'
           artifact-retention-days: '30'
           github-token: ${{ secrets.GITHUB_TOKEN }}
