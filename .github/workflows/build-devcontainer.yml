@@ -67,7 +67,6 @@ jobs:
           imageTag: ${{ steps.tags.outputs.tags }}
           cacheFrom: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           push: always
-          eventFilterForPush: push,pull_request,workflow_dispatch
           # Test the container with a simple validation
           runCmd: |
             echo "=== Testing dev container ==="
