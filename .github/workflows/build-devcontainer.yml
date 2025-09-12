@@ -68,7 +68,7 @@ jobs:
           cacheFrom: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           push: filter
           refFilterForPush: refs/heads/main
-          eventFilterForPush: pull_request,workflow_dispatch
+          eventFilterForPush: push,pull_request,workflow_dispatch
           # Test the container with a simple validation
           runCmd: |
             echo "=== Testing dev container ==="
