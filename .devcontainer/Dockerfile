@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/devcontainers/base:noble
 
-ARG VSCODE_COMMIT=7adae6a56e34cb64d08899664b814cf620465925
+ARG VSCODE_COMMIT=f220831ea2d946c0dcb0f3eaa480eb435a2c1260
 
 # Copy and run VS Code installation files
 COPY ./vscode-init /opt/vscode-init
