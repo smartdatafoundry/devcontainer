@@ -114,7 +114,14 @@ To update the VS Code commit argument in the devcontainer file, follow these ste
   ```
 - Replace `your_commit_hash_here` with the desired commit hash of the VS Code Server you want to target.
 - Save the changes to the devcontainer file.
-- Commit and push the changes to your repository to trigger the build workflow with the updated VS Code commit.
+- Commit and push the changes to your repository to trigger the build workflow with the updated VS Code Server.
+
+## Adding New Extensions
+To add new VS Code extensions to the container, follow these steps:
+1. Open the `.devcontainer/vscode-init/vscode-extensions.txt` file.
+2. Add the identifier of the desired extension in the format `publisher.extensionName` on a new line.
+3. Save the changes to the `vscode-extensions.txt` file.
+4. Commit and push the changes to your repository to trigger the build workflow with the updated extensions
 
 ## 🔄 Automated Builds
 
