@@ -37,6 +37,9 @@ Add this to your `.devcontainer/devcontainer.json`:
 
 ### Using the Published Container inside the SDF Trusted Research Environment
 
+The following config contains additional arguments to enable devcontainers use
+within the SDF Trusted Research Environment.
+
 Add this to your `.devcontainer/devcontainer.json`:
 
 ```json
@@ -49,10 +52,10 @@ Add this to your `.devcontainer/devcontainer.json`:
 	  "type=tmpfs,target=/tmp"
 	],
 
-  // Workarounds for TRE container issues related to filesystem permissions
 	"runArgs": [
 	  "--userns=host"
 	],
+  
   "remoteUser": "root"
 }
 ```
