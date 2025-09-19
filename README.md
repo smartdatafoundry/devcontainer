@@ -35,6 +35,28 @@ Add this to your `.devcontainer/devcontainer.json`:
 }
 ```
 
+### Using the Published Container inside the SDF Trusted Research Environment
+
+Add this to your `.devcontainer/devcontainer.json`:
+
+```json
+{
+  "name": "Development Container",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:latest",
+
+  "mounts": [
+	  "source=/safe_data,target=/safe_data,type=bind,consistency=cached",
+	  "type=tmpfs,target=/tmp"
+	],
+
+  // Workarounds for TRE container issues related to filesystem permissions
+	"runArgs": [
+	  "--userns=host"
+	],
+  "remoteUser": "root"
+}
+```
+
 ### Using This Repository Directly
 
 1. Clone this repository
