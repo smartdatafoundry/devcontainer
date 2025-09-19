@@ -55,7 +55,7 @@ Add this to your `.devcontainer/devcontainer.json`:
 	"runArgs": [
 	  "--userns=host"
 	],
-  
+
   "remoteUser": "root"
 }
 ```
@@ -88,6 +88,33 @@ Add this to your `.devcontainer/devcontainer.json`:
   - Markdown All in One
   - Rainbow CSV
 - **VS Code Server**: Pre-installed for immediate development
+
+## ⚙️ Configuring VS Code Server Version
+
+The container comes with VS Code Server pre-installed for immediate development
+within the SDF Trusted Research Environment. The specific version of VS Code 
+Server is controlled via the `devcontainer.json` file and needs to track the 
+exact commit of the VS Code version inside the Trusted Research Environment,
+available via _Help > About_.
+
+To update the VS Code commit argument in the devcontainer file, follow these steps:
+- Open the devcontainer file located at `.devcontainer/devcontainer.json`.
+- Locate the line that specifies the VS Code commit argument. It should look something like this:
+  ```json
+  {
+    ...
+    "build": {
+      "dockerfile": "Dockerfile",
+      "args": {
+        "VSCODE_COMMIT": "your_commit_hash_here"
+      }
+    },
+    ...
+  }
+  ```
+- Replace `your_commit_hash_here` with the desired commit hash of the VS Code Server you want to target.
+- Save the changes to the devcontainer file.
+- Commit and push the changes to your repository to trigger the build workflow with the updated VS Code commit.
 
 ## 🔄 Automated Builds
 
