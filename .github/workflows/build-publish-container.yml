@@ -23,6 +23,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      pull-requests: write  # Add this permission for commenting on PRs
       # attestations: write # Not enabled for organization
       id-token: write
     steps:
