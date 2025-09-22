@@ -53,7 +53,9 @@ Add this to your `.devcontainer/devcontainer.json`:
 	],
 
 	"runArgs": [
-	  "--userns=host"
+	  "--userns=host",
+    "-e HTTP_PROXY",
+    "-e HTTPS_PROXY",
 	],
 
   "remoteUser": "root"
