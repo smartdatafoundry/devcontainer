@@ -99,29 +99,6 @@ When you create the devcontainer configuration:
 
 This approach leverages container technology directly while maintaining the ability to modify and iterate on your code seamlessly.
 
-## Troubleshooting
-
-### Extension Not Found
-
-If you can't see "Dev Containers" in the VS Code command palette:
-- Ensure you've followed the manual extension installation steps above
-- Restart VS Code after installing the extension
-- Check that the extension is enabled in the Extensions panel
-
-### Container Runtime Issues
-
-- If you get Docker-related errors, ensure VS Code is configured to use podman: `"dev.containers.dockerPath": "podman"`
-- If you get "Error: reading blob" or "500 Internal Server Error" when pulling images:
-  - Try using a different TRE workspace
-  - Contact TRE support if the issue persists
-  - Some workspaces may have image access restrictions
-
-### Network Issues
-
-If you experience network-related delays:
-- Ensure your proxy settings are correctly configured in the `runArgs` (HTTP_PROXY and HTTPS_PROXY are essential)
-- File system responsiveness may vary depending on TRE network conditions
-
 ## Quick Start Workflow
 
 1. **Install the Dev Containers extension** (follow Prerequisites section above)
@@ -153,6 +130,29 @@ The container comes with VS Code Server pre-installed and to control the version
    }
    ```
 3. This is typically only needed for custom container builds, not when using the published container
+
+## Troubleshooting
+
+### Extension Not Found
+
+If you can't see "Dev Containers" in the VS Code command palette:
+- Ensure you've followed the manual extension installation steps above
+- Restart VS Code after installing the extension
+- Check that the extension is enabled in the Extensions panel
+
+### Container Runtime Issues
+
+- If you get Docker-related errors, ensure VS Code is configured to use podman: `"dev.containers.dockerPath": "podman"`
+- If you get "Error: reading blob" or "500 Internal Server Error" when pulling images:
+  - Try using a different TRE workspace
+  - Contact TRE support if the issue persists
+  - Some workspaces may have image access restrictions
+
+### Network Issues
+
+If you experience network-related delays:
+- Ensure your proxy settings are correctly configured in the `runArgs` (HTTP_PROXY and HTTPS_PROXY are essential)
+- File system responsiveness may vary depending on TRE network conditions
 
 ## Support
 
