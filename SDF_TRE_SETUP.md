@@ -4,9 +4,17 @@ This guide provides step-by-step instructions for setting up and using dev conta
 
 ## Prerequisites
 
-Before using dev containers in the SDF Trusted Research Environment, you need to manually install the Dev Containers extension in VS Code:
+Before using dev containers in the SDF Trusted Research Environment, you need to obtain the container image and manually install the Dev Containers extension in VS Code:
 
-### 1. Extract the Dev Containers Extension
+### 1. Obtain the Dev Container Image
+
+Pull the latest devcontainer image using the CES (Container Execution Service):
+
+```bash
+ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
+```
+
+### 2. Extract the Dev Containers Extension
 
 The extension is baked into the container image. Extract it using:
 
@@ -18,7 +26,7 @@ podman run --rm -it \
   cp /opt/ms-vscode-remote.remote-containers.vsix .
 ```
 
-### 2. Install the Extension
+### 3. Install the Extension
 
 **Option A: Via Command Line**
 ```bash
@@ -32,7 +40,7 @@ code --install-extension ms-vscode-remote.remote-containers.vsix
 - Select "Install from VSIX..."
 - Choose the `ms-vscode-remote.remote-containers.vsix` file you extracted
 
-### 3. Configure VS Code for Podman
+### 4. Configure VS Code for Podman
 
 Add to your VS Code settings.json to configure Podman as the container runtime:
 
@@ -47,7 +55,7 @@ Add to your VS Code settings.json to configure Podman as the container runtime:
 }
 ```
 
-### 4. Ensure Container Access
+### 5. Ensure Container Access
 
 Verify you have access to podman/docker within your TRE workspace.
 
