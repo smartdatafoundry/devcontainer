@@ -35,32 +35,17 @@ Add this to your `.devcontainer/devcontainer.json`:
 }
 ```
 
-### Using the Published Container inside the SDF Trusted Research Environment
+### Using in SDF Trusted Research Environment
 
-The following config contains additional arguments to enable devcontainers use
-within the SDF Trusted Research Environment.
+For detailed instructions on setting up and using this dev container within the SDF Trusted Research Environment, see:
 
-Add this to your `.devcontainer/devcontainer.json`:
+**[📋 SDF TRE Setup Guide](SDF_TRE_SETUP.md)**
 
-```json
-{
-  "name": "Development Container",
-  "image": "ghcr.io/smartdatafoundry/devcontainer:latest",
-
-  "mounts": [
-	  "source=/safe_data,target=/safe_data,type=bind,consistency=cached",
-	  "type=tmpfs,target=/tmp"
-	],
-
-	"runArgs": [
-	  "--userns=host",
-    "-e HTTP_PROXY",
-    "-e HTTPS_PROXY",
-	],
-
-  "remoteUser": "root"
-}
-```
+This includes:
+- Manual Dev Containers extension installation
+- TRE-specific configuration requirements
+- Proxy and network setup
+- Troubleshooting TRE-specific issues
 
 ### Using This Repository Directly
 
@@ -70,6 +55,7 @@ Add this to your `.devcontainer/devcontainer.json`:
 
 ## 📚 Documentation
 
+- [SDF TRE Setup Guide](SDF_TRE_SETUP.md) - Complete setup guide for SDF Trusted Research Environment
 - [Dev Container Details](DEVCONTAINER.md) - Complete documentation about the container
 - [Usage Examples](examples/USAGE.md) - Examples of how to use the published container
 - [Dev Container Spec](https://containers.dev) - Learn more about dev containers
@@ -91,32 +77,9 @@ Add this to your `.devcontainer/devcontainer.json`:
   - Rainbow CSV
 - **VS Code Server**: Pre-installed for immediate development
 
-## ⚙️ Configuring VS Code Server Version
+## ⚙️ VS Code Server
 
-The container comes with VS Code Server pre-installed for immediate development
-within the SDF Trusted Research Environment. The specific version of VS Code 
-Server is controlled via the `devcontainer.json` file and needs to track the 
-exact commit of the VS Code version inside the Trusted Research Environment,
-available via _Help > About_.
-
-To update the VS Code commit argument in the devcontainer file, follow these steps:
-- Open the devcontainer file located at `.devcontainer/devcontainer.json`.
-- Locate the line that specifies the VS Code commit argument. It should look something like this:
-  ```json
-  {
-    ...
-    "build": {
-      "dockerfile": "Dockerfile",
-      "args": {
-        "VSCODE_COMMIT": "your_commit_hash_here"
-      }
-    },
-    ...
-  }
-  ```
-- Replace `your_commit_hash_here` with the desired commit hash of the VS Code Server you want to target.
-- Save the changes to the devcontainer file.
-- Commit and push the changes to your repository to trigger the build workflow with the updated VS Code Server.
+The container comes with VS Code Server pre-installed for immediate development. For TRE-specific VS Code Server configuration, see the [SDF TRE Setup Guide](SDF_TRE_SETUP.md).
 
 ## Adding New Extensions
 To add new VS Code extensions to the container, follow these steps:
