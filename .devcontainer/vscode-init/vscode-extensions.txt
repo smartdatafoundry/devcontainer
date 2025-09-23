@@ -1,9 +1,15 @@
 # VS Code Extensions List
 # One extension ID per line
+charliermarsh.ruff
 Continue.continue
+DavidAnson.vscode-markdownlint
+eamodio.gitlens
 marimo-team.vscode-marimo
 mechatroner.rainbow-csv
 ms-python.black-formatter
 ms-toolsai.datawrangler
 ms-toolsai.jupyter
+REditorSupport.r
+REditorSupport.r-syntax
 yzhang.markdown-all-in-one
+vscodevim.vim
