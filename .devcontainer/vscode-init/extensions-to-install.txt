@@ -1,5 +1,6 @@
 # VS Code Extensions List
-# One extension ID per line
+# These extensions will be enabled for all users of the devcontainer.
+# One extension ID per line.
 charliermarsh.ruff
 Continue.continue
 DavidAnson.vscode-markdownlint
