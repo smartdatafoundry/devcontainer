@@ -12,4 +12,3 @@ ms-toolsai.jupyter
 REditorSupport.r
 REditorSupport.r-syntax
 yzhang.markdown-all-in-one
-vscodevim.vim
