@@ -66,6 +66,7 @@ This includes:
 
 - **Base**: Ubuntu 24.04 (Noble) via Microsoft's devcontainers base image
 - **Python**: System Python with development tools (via devcontainer feature)
+- **R**: Full R language support with development tools (via Rocker Project devcontainer feature)
 - **Git**: Latest version with configuration support
 - **Shell**: Zsh with Oh My Zsh (via common-utils feature)
 - **Quarto**: Document publishing platform (latest version)
@@ -78,6 +79,93 @@ This includes:
   - Markdown All in One
   - Rainbow CSV
 - **VS Code Server**: Pre-installed for immediate development
+
+## 📊 R Language Support
+
+This dev container includes comprehensive R language support through the [Rocker Project's devcontainer features](https://github.com/rocker-org/devcontainer-features). The R feature provides:
+
+### Features Available
+- **R Installation**: Latest R version via apt package manager
+- **Development Tools**: devtools, renv for package management
+- **IDE Integration**: 
+  - languageserver package for VS Code R extension support
+  - httpgd package for interactive graphics
+  - rmarkdown for document generation
+- **Jupyter Integration**: R kernel for Jupyter notebooks
+- **Interactive Console**: radian (enhanced R console with syntax highlighting)
+- **Debugging Support**: vscDebugger package for VS Code R debugging
+
+### R Package Installation Options
+
+The R feature supports multiple package installation methods:
+
+1. **Binary Installation via apt** (Fastest)
+   - Uses pre-compiled packages from CRAN and BioConductor
+   - On Ubuntu, all CRAN packages available via [r2u](https://eddelbuettel.github.io/r2u/)
+   - Install using: `apt-get install r-cran-<package-name>`
+
+2. **Source Installation via R**
+   - Traditional `install.packages()` function
+   - Required for packages not available via apt
+
+3. **Binary Installation with bspm** (Ubuntu only)
+   - Bridge to System Package Manager
+   - Automatically uses apt when available, falls back to source
+
+### Configuration Example
+
+To enable R support in your devcontainer, add the r-apt feature to your `devcontainer.json`:
+
+```json
+{
+  "name": "Python & R Development Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/rocker-org/devcontainer-features/r-apt:0": {
+      "vscodeRSupport": "full",
+      "installDevTools": true,
+      "installREnv": true,
+      "installRMarkdown": true,
+      "installJupyterlab": true,
+      "installRadian": true,
+      "installVscDebugger": true
+    }
+  }
+}
+```
+
+### Supported Platforms
+- `linux/amd64` and `linux/arm64` platforms
+- Debian and Ubuntu LTS distributions
+- Compatible with non-R base images (R will be installed automatically)
+
+### Additional R Features
+
+The Rocker Project provides additional complementary features you can combine:
+
+- **r-packages**: Install specific R packages via pak during build
+- **r-dependent-packages**: Install R packages from a DESCRIPTION file
+- **renv-cache**: Share renv cache across containers
+- **rstudio-server**: Add RStudio Server for web-based IDE
+
+Example with additional features:
+```json
+"features": {
+  "ghcr.io/rocker-org/devcontainer-features/r-apt:0": {
+    "vscodeRSupport": "full",
+    "installDevTools": true,
+    "installREnv": true
+  },
+  "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
+    "packages": "dplyr,ggplot2,tidyr"
+  },
+  "ghcr.io/rocker-org/devcontainer-features/rstudio-server:0": {}
+}
+```
+
+For more detailed information about R devcontainer features, visit the [Rocker Project devcontainer features documentation](https://github.com/rocker-org/devcontainer-features/tree/main/src/r-apt).
 
 ## ⚙️ VS Code Server
 
