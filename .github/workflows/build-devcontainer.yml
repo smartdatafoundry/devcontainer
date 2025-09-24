@@ -35,7 +35,7 @@ jobs:
       - name: Read VSCODE_COMMIT from .env
         id: vscode-commit
         run: |
-          VSCODE_COMMIT=$(grep '^VSCODE_COMMIT=' .devcontainer/.env | cut -d'=' -f2)
+          VSCODE_COMMIT=$(grep 'VSCODE_COMMIT' .devcontainer/devcontainer.json | tr -d '"' | cut -d " " -f 2)
           VSCODE_SHORT=${VSCODE_COMMIT:0:7}
           echo "vscode_commit=$VSCODE_COMMIT" >> $GITHUB_OUTPUT
           echo "vscode_short=$VSCODE_SHORT" >> $GITHUB_OUTPUT
