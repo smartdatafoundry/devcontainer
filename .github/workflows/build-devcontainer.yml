@@ -32,7 +32,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Read VSCODE_COMMIT from .env
+      - name: Read VSCODE_COMMIT from devcontainer.json
         id: vscode-commit
         run: |
           VSCODE_COMMIT=$(grep 'VSCODE_COMMIT' .devcontainer/devcontainer.json | tr -d '"' | cut -d " " -f 2)
