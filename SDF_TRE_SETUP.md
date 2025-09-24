@@ -21,8 +21,6 @@ The quick start is for users familiar with the TRE and using Dev Containers. If 
 
 Verify you have access to `ces-pull` and Podman within your TRE workspace.
 
-<!-- Write bash block to test for the presence of the ces-pull command -->
-
 ```bash
 which ces-pull
 # Should respond with the path to the command
