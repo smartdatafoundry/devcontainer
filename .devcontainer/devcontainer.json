@@ -15,7 +15,6 @@
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
 			"toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,poetry,marimo[recommended]",
-			"installJupyterlab": false,
 			"version": "os-provided"
 		},
 		"ghcr.io/devcontainers/features/common-utils:2": {
@@ -31,7 +30,28 @@
 		},
 		"ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
 			"version": "latest"
+		},
+
+		// R language support, https://github.com/rocker-org/devcontainer-features/tree/main/src/r-apt
+		"ghcr.io/rocker-org/devcontainer-features/r-apt:0": {
+			"installDevTools": true,
+			"installREnv": true,
+			"installRMarkdown": true,
+			"installRadian": true,
+			"installVscDebugger": true,
+			"vscodeRSupport": "full"
 		}
+		// Example of adding R packages via apt during build:
+		// Uncomment the following lines to install the 'curl' package for R
+		// "features": {
+		// 	"ghcr.io/rocker-org/devcontainer-features/r-apt:latest": {},
+		// 	"ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+		// 		"packages": "r-cran-dplyr,r-cran-curl"
+		// 	}
+		// },
+		// "overrideFeatureInstallOrder": [
+		// 	"ghcr.io/rocker-org/devcontainer-features/r-apt"
+		// ]
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
