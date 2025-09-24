@@ -21,7 +21,17 @@ The quick start is for users familiar with the TRE and using Dev Containers. If 
 
 Verify you have access to `ces-pull` and Podman within your TRE workspace.
 
-You can do this by...?
+<!-- Write bash block to test for the presence of the ces-pull command -->
+
+```bash
+which ces-pull
+# Should respond with the path to the command
+# e.g. /usr/local/bin/ces-pull
+
+which podman
+# Should respond with the path to the command
+# e.g. /usr/bin/podman
+```
 
 ## Configure VS Code
 
@@ -181,8 +191,8 @@ If you experience network-related delays:
 
 ## Support
 
-For TRE-specific issues:
+For any other issues:
 
 - Check the troubleshooting section above
 - Contact SDF TRE support for workspace or network-related problems
-- Report container-specific issues to the [devcontainer repository](https://github.com/smartdatafoundry/devcontainer)
+- Report container-specific issues on [our repo's GitHub Issues](https://github.com/smartdatafoundry/devcontainer/issues)
