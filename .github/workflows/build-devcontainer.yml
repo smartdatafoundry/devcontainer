@@ -12,6 +12,7 @@ on:
       - main
     paths:
       - '.devcontainer/**'
+      - '.github/workflows/build-devcontainer.yml'
   workflow_dispatch:
 
 env:
@@ -30,6 +31,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Read VSCODE_COMMIT from .env
+        id: vscode-commit
+        run: |
+          VSCODE_COMMIT=$(grep '^VSCODE_COMMIT=' .devcontainer/.env | cut -d'=' -f2)
+          VSCODE_SHORT=${VSCODE_COMMIT:0:7}
+          echo "vscode_commit=$VSCODE_COMMIT" >> $GITHUB_OUTPUT
+          echo "vscode_short=$VSCODE_SHORT" >> $GITHUB_OUTPUT
+          echo "Full VSCODE_COMMIT: $VSCODE_COMMIT"
+          echo "Short VSCODE_COMMIT: $VSCODE_SHORT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,6 +63,8 @@ jobs:
             type=ref,event=tag
             type=sha,prefix={{branch}}-,enable={{is_default_branch}}
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }}
+            type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}}
 
       - name: Extract tag names only
         id: tags
@@ -136,6 +149,8 @@ jobs:
           echo "🏷️ Image: ${{ env.IMAGE_NAME }}"
           echo "🆔 Tags: ${{ steps.meta.outputs.tags }}"
           echo "📝 Labels: ${{ steps.meta.outputs.labels }}"
+          echo "🔧 VSCode Commit: ${{ steps.vscode-commit.outputs.vscode_commit }}"
+          echo "📋 Short Commit: ${{ steps.vscode-commit.outputs.vscode_short }}"
           echo ""
           echo "To use this dev container:"
           echo "1. Reference it in your devcontainer.json:"
