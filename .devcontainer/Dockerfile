@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/base:noble
 
 # VS Code commit ID for devcontainer compatibility, argument supplied at build time via devcontainer.json
-ARG VSCODE_COMMIT=f220831ea2d946c0dcb0f3eaa480eb435a2c1260
+ARG VSCODE_COMMIT
 
 # Copy and run VS Code installation files
 COPY ./vscode-init /opt/vscode-init
