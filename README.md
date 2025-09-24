@@ -19,6 +19,8 @@ This dev container is automatically built and published to GitHub Container Regi
   - `main` - Latest build from main branch  
   - `main-<commit-sha>` - Specific commit builds from main branch
   - `pr-<number>` - Pull request builds for testing
+  - `vscode-<vscode-commit-sha>` - Builds with specific VS Code versions
+  - `vscode-<vscode-commit-sha>-<commit-sha>` - Combination of VS Code and git commit
 
 **Recommended**: Use `latest` for stable deployments or `main-<commit-sha>` for reproducible builds.
 
@@ -94,6 +96,7 @@ The container is built automatically with smart tagging:
 
 - **Main Branch Pushes**: Creates `latest`, `main`, and `main-<commit-sha>` tags
 - **Pull Requests**: Creates `pr-<number>` tags for testing
+- **VS Code Commits**: Creates `vscode-<vscode-commit-sha>` and `vscode-<vscode-commit-sha>-<commit-sha>` tags
 - **Manual Dispatch**: Available for on-demand builds
 - **Platform**: linux/amd64 optimized for development speed
 
@@ -101,3 +104,5 @@ The container is built automatically with smart tagging:
 - Use `latest` for the most recent stable release
 - Use `main-<commit-sha>` when you need reproducible builds
 - Use `pr-<number>` tags to test specific pull request changes
+- Use `vscode-<commit-sha>` tags to match specific VS Code versions
+- Use `vscode-<commit-sha>-<container-commit-sha>` tags for a combination of VS Code and git commits
