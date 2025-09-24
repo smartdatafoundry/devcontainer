@@ -95,15 +95,18 @@ The container is automatically built and published using GitHub Actions:
 │   ├── Dockerfile                 # Custom Docker build
 │   └── vscode-init/               # VS Code server and extensions setup
 │       ├── 00-install-vscode-server.sh
-│       ├── 01-install-vscode-extensions.sh
-|       ├── 02-download-container-tools-extension.sh
-│       └── vscode-extensions.txt
+│       ├── 01-install-extensions.sh
+│       ├── 02-download-extensions.sh
+│       ├── extensions-to-download.txt
+│       └── extensions-to-install.txt
 ├── .github/workflows/
-│   └── build-devcontainer.yml     # Build and publish workflow
-├── examples/
-│   └── USAGE.md                   # Usage examples
-├── DEVCONTAINER.md                 # Detailed documentation
-└── README.md                      # Overview and quick start
+│   ├── build-devcontainer.yml     # Build and publish workflow
+│   └── build-publish-container.yml
+├── assets/                        # Documentation assets
+├── docs/                          # Additional documentation
+├── DEVCONTAINER.md                # Detailed documentation
+├── README.md                      # Overview and quick start
+└── SDF_TRE_SETUP.md              # SDF TRE setup guide
 ```
 
 ## 🔧 Customization

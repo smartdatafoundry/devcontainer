@@ -1,9 +1,0 @@
-# VS Code Extensions List
-# One extension ID per line
-Continue.continue
-ms-python.black-formatter
-ms-toolsai.jupyter
-yzhang.markdown-all-in-one
-mechatroner.rainbow-csv
-marimo-team.vscode-marimo
-ms-toolsai.datawrangler

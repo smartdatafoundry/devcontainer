@@ -1,0 +1,6 @@
+# VS Code extensions list for downloading
+# These extensions are to be extracted from the image and installed
+# into the user's VS Code. They will not be available in the devcontainer.
+# One extension ID per line.
+ms-vscode-remote.remote-containers
+vscodevim.vim

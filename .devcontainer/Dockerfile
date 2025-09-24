@@ -7,8 +7,8 @@ ARG VSCODE_COMMIT
 COPY ./vscode-init /opt/vscode-init
 RUN cd /opt/vscode-init \ 
     && ./00-install-vscode-server.sh ${VSCODE_COMMIT} \
-    && ./01-install-vscode-extensions.sh ${VSCODE_COMMIT} \
-    && ./02-download-container-tools-extension.sh
+    && ./01-install-extensions.sh ${VSCODE_COMMIT} \
+    && ./02-download-extensions.sh
 
 WORKDIR /workspace
 

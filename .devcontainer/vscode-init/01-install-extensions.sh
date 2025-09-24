@@ -6,7 +6,7 @@ set -e
 
 VSCODE_COMMIT=${1:-"7adae6a56e34cb64d08899664b814cf620465925"}
 VSCODE_SERVER_HOME="/root/.vscode-server/bin/${VSCODE_COMMIT}"
-EXTENSIONS_FILE="vscode-extensions.txt"
+EXTENSIONS_FILE="extensions-to-install.txt"
 
 # Check if VS Code server is installed
 if [ ! -f "${VSCODE_SERVER_HOME}/bin/code-server" ]; then
