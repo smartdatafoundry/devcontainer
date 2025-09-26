@@ -39,7 +39,7 @@ jobs:
         id: vscode-commit
         run: |
           # For manual dispatch, use the input; for PRs use default value for tagging
-          VSCODE_COMMIT="${{ github.event.inputs.vscode_commit }}"
+          VSCODE_COMMIT="${{ env.VSCODE_COMMIT }}"
           VSCODE_SHORT=${VSCODE_COMMIT:0:7}
           echo "vscode_commit=$VSCODE_COMMIT" >> $GITHUB_OUTPUT
           echo "vscode_short=$VSCODE_SHORT" >> $GITHUB_OUTPUT
@@ -78,14 +78,13 @@ jobs:
 
       - name: Build and publish dev container
         uses: devcontainers/ci@v0.3
-        env:
-          # Only override VSCODE_COMMIT for manual dispatch; PRs use devcontainer.json default
-          VSCODE_COMMIT: ${{ steps.vscode-commit.outputs.vscode_commit }}
         with:
           imageName: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           imageTag: ${{ steps.tags.outputs.tags }}
           cacheFrom: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           push: always
+          env: |
+            VSCODE_COMMIT=${{ steps.vscode-commit.outputs.vscode_commit }}
           # Test the container with a simple validation
           runCmd: |
             echo "=== Testing dev container ==="
