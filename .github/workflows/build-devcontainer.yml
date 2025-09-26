@@ -18,7 +18,7 @@ env:
   # Set a default VS Code commit hash for tagging purposes
   # This can be overridden via workflow_dispatch input if needed
   # For PRs, the default value will be used
-  VSCODE_COMMIT: ${{ github.event.inputs.vscode_commit || 'f220831ea2d946c0dcb0f3eaa480eb435a2c1260' }}
+  VSCODE_COMMIT: ${{ github.event.inputs.vscode_commit }}
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
