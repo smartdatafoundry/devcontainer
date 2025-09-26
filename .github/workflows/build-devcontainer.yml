@@ -1,12 +1,6 @@
 name: Build and Publish Dev Container
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.devcontainer/**'
-      - '.github/workflows/build-devcontainer.yml'
   pull_request:
     branches:
       - main
@@ -14,6 +8,11 @@ on:
       - '.devcontainer/**'
       - '.github/workflows/build-devcontainer.yml'
   workflow_dispatch:
+    inputs:
+      vscode_commit:
+        description: 'VS Code commit hash to use'
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -32,10 +31,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Read VSCODE_COMMIT from devcontainer.json
+      - name: Determine VSCODE_COMMIT
         id: vscode-commit
         run: |
-          VSCODE_COMMIT=$(grep 'VSCODE_COMMIT' .devcontainer/devcontainer.json | tr -d '"' | cut -d " " -f 2)
+          # For manual dispatch, use the required input
+          # For PR builds, read from devcontainer.json
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VSCODE_COMMIT="${{ github.event.inputs.vscode_commit }}"
+            echo "Using VSCODE_COMMIT from workflow input: $VSCODE_COMMIT"
+          else
+            VSCODE_COMMIT=$(grep 'VSCODE_COMMIT' .devcontainer/devcontainer.json | tr -d '"' | cut -d " " -f 2)
+            echo "Using VSCODE_COMMIT from devcontainer.json: $VSCODE_COMMIT"
+          fi
+          
           VSCODE_SHORT=${VSCODE_COMMIT:0:7}
           echo "vscode_commit=$VSCODE_COMMIT" >> $GITHUB_OUTPUT
           echo "vscode_short=$VSCODE_SHORT" >> $GITHUB_OUTPUT
@@ -76,6 +84,9 @@ jobs:
 
       - name: Build and publish dev container
         uses: devcontainers/ci@v0.3
+        env:
+          # Pass the resolved VSCODE_COMMIT as an environment variable for the build
+          VSCODE_COMMIT: ${{ steps.vscode-commit.outputs.vscode_commit }}
         with:
           imageName: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           imageTag: ${{ steps.tags.outputs.tags }}
