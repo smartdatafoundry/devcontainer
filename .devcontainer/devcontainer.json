@@ -5,7 +5,7 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
-			"VSCODE_COMMIT": "${localEnv:VSCODE_COMMIT:0f0d87fa9e96c856c5212fc86db137ac0d783365}"
+			"VSCODE_COMMIT": "${localEnv:VSCODE_COMMIT:f220831ea2d946c0dcb0f3eaa480eb435a2c1260}"
 		}
 	},
 
