@@ -78,13 +78,13 @@ jobs:
 
       - name: Build and publish dev container
         uses: devcontainers/ci@v0.3
+        env:
+          VSCODE_COMMIT: ${{ steps.vscode-commit.outputs.vscode_commit }}
         with:
           imageName: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           imageTag: ${{ steps.tags.outputs.tags }}
           cacheFrom: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           push: always
-          env: |
-            VSCODE_COMMIT=${{ steps.vscode-commit.outputs.vscode_commit }}
           # Test the container with a simple validation
           runCmd: |
             echo "=== Testing dev container ==="
