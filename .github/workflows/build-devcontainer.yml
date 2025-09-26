@@ -31,23 +31,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Determine VSCODE_COMMIT
+      - name: Override VSCODE_COMMIT if provided
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          # Update devcontainer.json with the provided VSCODE_COMMIT
+          sed -i 's/"VSCODE_COMMIT": "${VSCODE_COMMIT:-[^}]*}"/"VSCODE_COMMIT": "${{ github.event.inputs.vscode_commit }}"/' .devcontainer/devcontainer.json
+          echo "Updated devcontainer.json with VSCODE_COMMIT: ${{ github.event.inputs.vscode_commit }}"
+
+      - name: Read VSCODE_COMMIT from devcontainer.json
         id: vscode-commit
         run: |
-          # For manual dispatch, use the required input
-          # For PR builds, read from devcontainer.json
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VSCODE_COMMIT="${{ github.event.inputs.vscode_commit }}"
-            echo "Using VSCODE_COMMIT from workflow input: $VSCODE_COMMIT"
-          else
-            VSCODE_COMMIT=$(grep 'VSCODE_COMMIT' .devcontainer/devcontainer.json | tr -d '"' | cut -d " " -f 2)
-            echo "Using VSCODE_COMMIT from devcontainer.json: $VSCODE_COMMIT"
-          fi
-          
+          # Always read from devcontainer.json (which may have been updated above)
+          VSCODE_COMMIT=$(grep 'VSCODE_COMMIT' .devcontainer/devcontainer.json | tr -d '"' | cut -d " " -f 2)
           VSCODE_SHORT=${VSCODE_COMMIT:0:7}
           echo "vscode_commit=$VSCODE_COMMIT" >> $GITHUB_OUTPUT
           echo "vscode_short=$VSCODE_SHORT" >> $GITHUB_OUTPUT
-          echo "Full VSCODE_COMMIT: $VSCODE_COMMIT"
+          echo "Using VSCODE_COMMIT: $VSCODE_COMMIT"
           echo "Short VSCODE_COMMIT: $VSCODE_SHORT"
 
       - name: Set up Docker Buildx
