@@ -11,7 +11,7 @@ on:
     inputs:
       vscode_commit:
         description: 'VS Code commit hash to use'
-        required: false
+        required: true
         type: string
 
 env:
