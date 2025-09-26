@@ -91,7 +91,8 @@ For further help, consult the GitHub Actions documentation or reach out to your 
 | Use Case | Recommended Tag | Example | Benefits |
 |----------|----------------|---------|----------|
 | **Development** | `latest` | `ghcr.io/smartdatafoundry/devcontainer:latest` | Always up-to-date, stable |
-| **Production/CI** | `main-<sha>` | `ghcr.io/smartdatafoundry/devcontainer:main-abc1234` | Reproducible, immutable |
+| **Production/CI** | `vscode-<vscode-sha>-<sha>` | `ghcr.io/smartdatafoundry/devcontainer:vscode-f220831-abc1234` | Reproducible, immutable, specific VS Code Server |
+| **VS Code Version Match** | `vscode-<vscode-sha>` | `ghcr.io/smartdatafoundry/devcontainer:vscode-f220831` | Match specific VS Code Server version |
 | **Testing PRs** | `pr-<number>` | `ghcr.io/smartdatafoundry/devcontainer:pr-42` | Test specific changes |
 | **Latest Main** | `main` | `ghcr.io/smartdatafoundry/devcontainer:main` | Latest main branch |
 
