@@ -13,11 +13,14 @@ The dev container is automatically built and published with multiple tags:
   - `main` - Latest build from main branch  
   - `main-<commit-sha>` - Specific commit builds from main branch
   - `pr-<number>` - Pull request builds for testing
+  - `vscode-<vscode-commit-sha>` - Builds with specific VS Code Server versions
+  - `vscode-<vscode-commit-sha>-<commit-sha>` - Combination of VS Code Server and container commit
 
 ### Choosing the Right Tag
 
 - **For production/stable use**: `ghcr.io/smartdatafoundry/devcontainer:latest`
-- **For reproducible builds**: `ghcr.io/smartdatafoundry/devcontainer:main-abc1234` 
+- **For reproducible builds**: `ghcr.io/smartdatafoundry/devcontainer:vscode-<vscode-commit-sha>-<commit-sha>` 
+- **For specific VS Code Server versions**: `ghcr.io/smartdatafoundry/devcontainer:vscode-<vscode-commit-sha>`
 - **For testing PR changes**: `ghcr.io/smartdatafoundry/devcontainer:pr-123`
 
 ## 🚀 Quick Start
@@ -76,16 +79,24 @@ This dev container includes:
   - Jupyter support
   - Markdown All in One
   - Rainbow CSV
+  - etc.
 
 ## 🔄 Automated Builds
 
-The container is automatically built and published using GitHub Actions:
+The container is built using GitHub Actions with controlled publishing:
 
 ### Build Workflow (`build-devcontainer.yml`)
-- **Triggers**: Push to main branch, PRs, manual dispatch
-- **Features**: Single platform (linux/amd64), intelligent caching, comprehensive validation tests
-- **Publishing**: Multi-tag publishing with `latest`, `main`, `main-<sha>`, and `pr-<number>` tags
+- **PR Triggers**: Pull requests automatically build test images (`pr-<number>` tags) using default VS Code Server commit
+- **Manual Dispatch**: Production builds require manual trigger with VS Code Server commit hash
+  - **Required Input**: VS Code Server commit hash for reproducible builds
+  - **Publishing**: Multi-tag publishing with `latest`, `main`, `vscode-<vscode-commit>`, and SHA-based tags
+- **Features**: Single platform (linux/amd64), intelligent caching, comprehensive validation tests, security scanning
 - **Testing**: Validates Python, Git, Zsh, and Quarto installations
+
+### VS Code Server Version Control
+- Default VS Code Server commit is defined in the `VSCODE_COMMIT` environment variable in `.github/workflows/build-devcontainer.yml`
+- Can be overridden via manual workflow dispatch input for custom builds
+- The VS Code Server commit hash is embedded in container tags for version tracking
 
 ## 📁 Repository Structure
 
@@ -143,6 +154,8 @@ The build system creates multiple tags from a single build:
 - `main`: Latest commit from main branch
 - `main-<sha>`: Specific commit SHA for reproducible builds
 - `pr-<number>`: Pull request builds for testing changes
+- `vscode-<vscode-commit-sha>`: Builds with specific VS Code Server versions
+- `vscode-<vscode-commit-sha>-<container-sha>`: Complete version specification
 
 ## 🧪 Testing
 

@@ -147,20 +147,20 @@ This approach leverages container technology directly while maintaining the abil
 The container comes with VS Code Server pre-installed and to control the version to match your TRE environment, you can specify the commit hash of the VS Code Server version to use as follows:
 
 1. Check your TRE VS Code version via _Help > About_
-2. Specify the VS Code commit in this repository's `devcontainer.json` file which is used for building the container, not to be confused with TRE workspace settings:
+2. The VS Code commit is defined in this repository's `.github/workflows/build-devcontainer.yml` with support for environment variable substitution, replace `default_commit_hash` with the commit hash you want to use:
 
    ```json
    {
      "build": {
        "dockerfile": "Dockerfile", 
        "args": {
-         "VSCODE_COMMIT": "your_commit_hash_here"
+         "VSCODE_COMMIT": "${localEnv:VSCODE_COMMIT:default_commit_hash}"
        }
      }
    }
    ```
 
-3. This is typically only needed for custom container builds, not when using the published container
+   This allows you to override the VS Code Server version using the `VSCODE_COMMIT` environment variable when building locally.
 
 ## Troubleshooting
 

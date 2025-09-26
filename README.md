@@ -19,10 +19,10 @@ This dev container is automatically built and published to GitHub Container Regi
   - `main` - Latest build from main branch  
   - `main-<commit-sha>` - Specific commit builds from main branch
   - `pr-<number>` - Pull request builds for testing
-  - `vscode-<vscode-commit-sha>` - Builds with specific VS Code versions
-  - `vscode-<vscode-commit-sha>-<commit-sha>` - Combination of VS Code and git commit
+  - `vscode-<vscode-commit-sha>` - Builds with specific VS Code Server versions
+  - `vscode-<vscode-commit-sha>-<commit-sha>` - Combination of VS Code Server and container commit
 
-**Recommended**: Use `latest` for stable deployments or `main-<commit-sha>` for reproducible builds.
+**Recommended**: Use `latest` for stable deployments or `vscode-<vscode-commit-sha>` for reproducible builds with specific VS Code Server versions.
 
 ## 🚀 Quick Start
 
@@ -59,7 +59,7 @@ This includes:
 
 - [SDF TRE Setup Guide](SDF_TRE_SETUP.md) - Complete setup guide for SDF Trusted Research Environment
 - [Dev Container Details](DEVCONTAINER.md) - Complete documentation about the container
-- [Usage Examples](examples/USAGE.md) - Examples of how to use the published container
+- [Build & Publish Guide](docs/BUILD_PUBLISH_CONTAINER.md) - Guide for building and publishing containers
 - [Dev Container Spec](https://containers.dev) - Learn more about dev containers
 
 ## 🛠️ What's Included
@@ -101,24 +101,37 @@ The container comes with VS Code Server pre-installed for immediate development.
 
 ## Adding New Extensions
 To add new VS Code extensions to the container, follow these steps:
-1. Open the `.devcontainer/vscode-init/vscode-extensions.txt` file.
+1. Open the appropriate file in `.devcontainer/vscode-init/`:
+   - `extensions-to-install.txt` for extensions to install directly
+   - `extensions-to-download.txt` for extensions that need to be downloaded first
 2. Add the identifier of the desired extension in the format `publisher.extensionName` on a new line.
-3. Save the changes to the `vscode-extensions.txt` file.
+3. Save the changes to the extension file.
 4. Commit and push the changes to your repository to trigger the build workflow with the updated extensions
 
 ## 🔄 Automated Builds
 
 The container is built automatically with smart tagging:
 
-- **Main Branch Pushes**: Creates `latest`, `main`, and `main-<commit-sha>` tags
-- **Pull Requests**: Creates `pr-<number>` tags for testing
-- **VS Code Commits**: Creates `vscode-<vscode-commit-sha>` and `vscode-<vscode-commit-sha>-<commit-sha>` tags
-- **Manual Dispatch**: Available for on-demand builds
+- **Pull Requests**: Creates `pr-<number>` tags for testing (uses default VS Code Server commit)
+- **Manual Dispatch**: Creates production tags with custom VS Code Server commit hash
+  - Required input: VS Code Server commit hash
+  - Creates `latest`, `main`, `vscode-<vscode-commit-sha>`, and commit-based tags
 - **Platform**: linux/amd64 optimized for development speed
+
+### Manual Build Process
+
+To create a production build with a specific VS Code Server version:
+
+1. Go to [Actions → Build and Publish Dev Container](../../actions/workflows/build-devcontainer.yml)
+2. Click "Run workflow"
+3. Enter the desired VS Code Server commit hash (required)
+4. Click "Run workflow"
+
+This ensures all published builds use the correct VS Code Server version and prevents automatic builds with mismatched versions.
 
 ### Tag Strategy
 - Use `latest` for the most recent stable release
 - Use `main-<commit-sha>` when you need reproducible builds
 - Use `pr-<number>` tags to test specific pull request changes
-- Use `vscode-<commit-sha>` tags to match specific VS Code versions
-- Use `vscode-<commit-sha>-<container-commit-sha>` tags for a combination of VS Code and git commits
+- Use `vscode-<vscode-commit-sha>` tags to match specific VS Code Server versions
+- Use `vscode-<vscode-commit-sha>-<container-commit-sha>` tags for complete reproducibility (specific VS Code Server + container version)
