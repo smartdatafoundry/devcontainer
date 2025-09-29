@@ -10,15 +10,11 @@ on:
   workflow_dispatch:
     inputs:
       vscode_commit:
-        description: 'VS Code commit hash to use'
-        required: true
+        description: 'VS Code commit hash to use (defaults to Dockerfile ARG default if not provided)'
+        required: false
         type: string
 
 env:
-  # Set a default VS Code commit hash for tagging purposes
-  # This can be overridden via workflow_dispatch input if needed
-  # For PRs, the default value will be used
-  VSCODE_COMMIT: ${{ github.event.inputs.vscode_commit || 'OTHER' }}
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -30,30 +26,38 @@ jobs:
       packages: write        # For publishing container images
       pull-requests: write   # For PR comments from security scan
       actions: write         # For uploading artifacts from security scan
-    
-    steps:
 
-      # Write a step to test recieving the VSCODE_COMMIT input and fail
-      - name: Debug VSCODE_COMMIT input
-        run: |
-          echo "Received VSCODE_COMMIT input: '${{ github.event.inputs.vscode_commit }}'"
-          if [ -z "${{ env.VSCODE_COMMIT }}" ]; then
-            echo "❌ VSCODE_COMMIT is not set. Failing the build."
-          else
-            echo "✅ VSCODE_COMMIT is set to '${{ env.VSCODE_COMMIT }}'"
-          fi
-          exit 1
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set VSCODE_COMMIT for tagging
+        
+      - name: Resolve VSCODE_COMMIT (input override > Dockerfile default)
         id: vscode-commit
         run: |
-          # For manual dispatch, use the input; for PRs use default value for tagging
-          VSCODE_COMMIT="${{ env.VSCODE_COMMIT }}"
+          # If user provided an input, trust it. Otherwise parse Dockerfile ARG default.
+          if [ -n "${{ github.event.inputs.vscode_commit }}" ]; then
+            VSCODE_COMMIT="${{ github.event.inputs.vscode_commit }}"
+            SOURCE="workflow_input"
+          else
+            # Extract default from ARG line: ARG VSCODE_COMMIT=<hash>
+            VSCODE_COMMIT=$(grep -E '^ARG VSCODE_COMMIT=' .devcontainer/Dockerfile | head -n1 | cut -d= -f2-)
+            if [ -z "$VSCODE_COMMIT" ]; then
+              echo "❌ Could not find default VSCODE_COMMIT in Dockerfile" >&2
+              exit 1
+            fi
+            SOURCE="dockerfile_default"
+          fi
+          # Basic validation (40 hex chars)
+          if ! echo "$VSCODE_COMMIT" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "❌ VSCODE_COMMIT '$VSCODE_COMMIT' is not a 40-char hex commit hash" >&2
+            exit 1
+          fi
           VSCODE_SHORT=${VSCODE_COMMIT:0:7}
+          echo "Resolved VSCODE_COMMIT=$VSCODE_COMMIT (source=$SOURCE)"
           echo "vscode_commit=$VSCODE_COMMIT" >> $GITHUB_OUTPUT
           echo "vscode_short=$VSCODE_SHORT" >> $GITHUB_OUTPUT
+          echo "source=$SOURCE" >> $GITHUB_OUTPUT
+          echo "Short: $VSCODE_SHORT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -166,6 +170,7 @@ jobs:
           echo "📝 Labels: ${{ steps.meta.outputs.labels }}"
           echo "🔧 VSCode Commit: ${{ steps.vscode-commit.outputs.vscode_commit }}"
           echo "📋 Short Commit: ${{ steps.vscode-commit.outputs.vscode_short }}"
+          echo "🗂️ Source: ${{ steps.vscode-commit.outputs.source }}"
           echo ""
           echo "To use this dev container:"
           echo "1. Reference it in your devcontainer.json:"

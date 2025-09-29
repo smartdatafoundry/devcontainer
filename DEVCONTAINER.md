@@ -94,9 +94,23 @@ The container is built using GitHub Actions with controlled publishing:
 - **Testing**: Validates Python, Git, Zsh, and Quarto installations
 
 ### VS Code Server Version Control
-- Default VS Code Server commit is defined in the `VSCODE_COMMIT` environment variable in `.github/workflows/build-devcontainer.yml`
-- Can be overridden via manual workflow dispatch input for custom builds
-- The VS Code Server commit hash is embedded in container tags for version tracking
+- Default VS Code Server commit is declared once in the Dockerfile via: `ARG VSCODE_COMMIT=<hash>`
+- Manual workflow dispatch can override this by providing the `vscode_commit` input
+- The workflow extracts the Dockerfile default automatically if no input is provided
+- The commit hash is embedded in container tags: `vscode-<short>` and `vscode-<short>-<container-sha>`
+
+Local override examples:
+
+```bash
+# Use Dockerfile default
+devcontainer build --workspace-folder .
+
+# Override for build
+export VSCODE_COMMIT=0f0d87fa9e96c856c5212fc86db137ac0d783365
+devcontainer build --workspace-folder .
+```
+
+This keeps maintenance simple: update the default by editing a single line in `Dockerfile` with support for overrides when needed via workflow inputs.
 
 ## 📁 Repository Structure
 
