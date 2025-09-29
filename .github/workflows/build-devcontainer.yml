@@ -30,8 +30,19 @@ jobs:
       packages: write        # For publishing container images
       pull-requests: write   # For PR comments from security scan
       actions: write         # For uploading artifacts from security scan
-      
+    
     steps:
+
+      # Write a step to test recieving the VSCODE_COMMIT input and fail
+      - name: Debug VSCODE_COMMIT input
+        run: |
+          echo "Received VSCODE_COMMIT input: '${{ github.event.inputs.vscode_commit }}'"
+          if [ -z "${{ env.VSCODE_COMMIT }}" ]; then
+            echo "❌ VSCODE_COMMIT is not set. Failing the build."
+          else
+            echo "✅ VSCODE_COMMIT is set to '${{ env.VSCODE_COMMIT }}'"
+          fi
+          exit 1
       - name: Checkout repository
         uses: actions/checkout@v4
 
