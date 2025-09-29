@@ -1,6 +1,6 @@
-# Dev Container for Python Development
+# Dev Container for Python & R Development
 
-This repository contains a development container configuration optimized for Python development, along with automated workflows to build and publish the container image to GitHub Container Registry (GHCR).
+This repository contains a development container configuration optimized for Python (and first-class R) development, along with automated workflows to build and publish the container image to GitHub Container Registry (GHCR). For high-level usage see `README.md`; this document focuses on implementation details.
 
 ## 📦 Published Container
 
@@ -66,20 +66,15 @@ docker run --rm -it -v $(pwd):/workspace ghcr.io/smartdatafoundry/devcontainer:l
 
 This dev container includes:
 
-- **Base**: Ubuntu Noble (24.04) via Microsoft's `mcr.microsoft.com/devcontainers/base:noble`
-- **Python**: System Python with pip and development tools (via devcontainer feature)
-- **Git**: Latest version with configuration support
-- **Shell**: Zsh with Oh My Zsh configuration (via common-utils feature)
-- **Quarto**: For document publishing and data science workflows (latest version)
-- **Marimo**: Markdown presentation tool, alternative to Jupyter Notebooks (latest version)
-- **VS Code Server**: Pre-installed for immediate development
-- **VS Code Extensions**:
-  - Continue (AI assistant)
-  - Black formatter for Python
-  - Jupyter support
-  - Markdown All in One
-  - Rainbow CSV
-  - etc.
+* **Base**: Ubuntu Noble (24.04) via Microsoft's `mcr.microsoft.com/devcontainers/base:noble`
+* **Python**: System Python with pip and development tools (via feature)
+* **R**: Installed via Rocker devcontainer feature (languageserver, httpgd, rmarkdown, renv, devtools, radian, vscDebugger)
+* **Git**: Latest stable
+* **Shell**: Zsh + Oh My Zsh (via common-utils feature)
+* **Quarto**: Latest (document publishing)
+* **Marimo**: Alternative interactive notebook/presentation tool
+* **VS Code Server**: Pre-installed (pin via tag families)
+* **VS Code Extensions**: Curated list (see `.devcontainer/vscode-init/extensions-to-install.txt`)
 
 ## 🔄 Automated Builds
 
@@ -97,7 +92,7 @@ The container is built using GitHub Actions with controlled publishing:
 - Default VS Code Server commit is declared once in the Dockerfile via: `ARG VSCODE_COMMIT=<hash>`
 - Manual workflow dispatch can override this by providing the `vscode_commit` input
 - The workflow extracts the Dockerfile default automatically if no input is provided
-- The commit hash is embedded in container tags: `vscode-<short>` and `vscode-<short>-<container-sha>`
+- The commit hash is embedded in container tags: `vscode-<short>` and `vscode-<short>-<branch-sha>`
 
 Local override examples:
 
@@ -131,7 +126,7 @@ This keeps maintenance simple: update the default by editing a single line in `D
 ├── docs/                          # Additional documentation
 ├── DEVCONTAINER.md                # Detailed documentation
 ├── README.md                      # Overview and quick start
-└── SDF_TRE_SETUP.md              # SDF TRE setup guide
+└── SDF_TRE_SETUP.md               # SDF TRE setup guide
 ```
 
 ## 🔧 Customization
@@ -169,7 +164,7 @@ The build system creates multiple tags from a single build:
 - `main-<sha>`: Specific commit SHA for reproducible builds
 - `pr-<number>`: Pull request builds for testing changes
 - `vscode-<vscode-commit-sha>`: Builds with specific VS Code Server versions
-- `vscode-<vscode-commit-sha>-<container-sha>`: Complete version specification
+- `vscode-<vscode-commit-sha>-<branch-sha>`: Complete version specification
 
 ## 🧪 Testing
 
@@ -198,7 +193,7 @@ The GitHub Action will automatically test your changes when you submit a PR.
 
 ## 📝 License
 
-This project is open source and available under the [MIT License](LICENSE).
+Licensed under [MIT](LICENSE).
 
 ---
 

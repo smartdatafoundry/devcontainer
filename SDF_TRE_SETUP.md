@@ -6,8 +6,8 @@ This guide provides step-by-step instructions for setting up and using dev conta
 
 The quick start is for users familiar with the TRE and using Dev Containers. If you haven't done this setup before, please read the rest of this document instead of the quick start.
 
-1. Pull the `devcontainer image`
-2. Install the Dev Containers extension
+1. Pull the devcontainer image
+2. Extract and install the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 3. Create your project directory
 4. Add project config file `.devcontainer/devcontainer.json`
 5. Open the project in VS Code
@@ -45,7 +45,7 @@ ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
 
 ### 2. Extract the Dev Containers Extension
 
-The extension is baked into the container image. Extract it using:
+The Dev Containers extension VSIX is baked into the image for offline / restricted environments. Extract it:
 
 ```bash
 podman run --rm -it \
@@ -144,23 +144,10 @@ This approach leverages container technology directly while maintaining the abil
 
 ### VS Code Server Version Management
 
-The container comes with VS Code Server pre-installed and to control the version to match your TRE environment, you can specify the commit hash of the VS Code Server version to use as follows:
+The container ships with VS Code Server pre-installed. To ensure reproducibility or to match an existing TRE host version, specify the commit hash:
 
 1. Check your TRE VS Code version via _Help > About_
-2. The VS Code commit is defined in this repository's `.github/workflows/build-devcontainer.yml` with support for environment variable substitution, replace `default_commit_hash` with the commit hash you want to use:
-
-   ```json
-   {
-     "build": {
-       "dockerfile": "Dockerfile", 
-       "args": {
-         "VSCODE_COMMIT": "${localEnv:VSCODE_COMMIT:default_commit_hash}"
-       }
-     }
-   }
-   ```
-
-   This allows you to override the VS Code Server version using the `VSCODE_COMMIT` environment variable when building locally.
+2. The VS Code commit  value is declared in the `Dockerfile`  and can be overriden via workflow inputs.
 
 ## Troubleshooting
 

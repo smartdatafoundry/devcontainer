@@ -4,25 +4,41 @@
 
 # devcontainer
 
-Container to support Python development that comes with baked in support for the Visual Studio Code Dev Container extension, additionally includes supporting tooling and a rich set of IDE extensions.
+Development container focused on Python (with first-class R support) providing a reproducible, batteries‑included environment. It ships with the VS Code Dev Containers extension assets, curated tooling, and a consistent tagging strategy for deterministic rebuilds.
+
+## Table of Contents
+1. Published Container
+2. Quick Start
+3. Using in SDF TRE
+4. Documentation
+5. What's Included
+6. R Language Support
+7. VS Code Server
+8. Adding Extensions
+9. Automated Builds & Tag Strategy
+10. Contributing
+11. License
 
 [![Build and Publish Dev Container](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml/badge.svg)](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml)
 
 ## 📦 Published Container
 
-This dev container is automatically built and published to GitHub Container Registry with multiple tags:
+Built and published automatically to GitHub Container Registry (GHCR):
 
-- **Registry**: GitHub Container Registry (GHCR)  
-- **Base Image**: `ghcr.io/smartdatafoundry/devcontainer`
-- **Available Tags**:
-  - `latest` - Latest stable build from main branch
-  - `main` - Latest build from main branch  
-  - `main-<commit-sha>` - Specific commit builds from main branch
-  - `pr-<number>` - Pull request builds for testing
-  - `vscode-<vscode-commit-sha>` - Builds with specific VS Code Server versions
-  - `vscode-<vscode-commit-sha>-<commit-sha>` - Combination of VS Code Server and container commit
+* **Registry**: `ghcr.io`
+* **Image**: `ghcr.io/smartdatafoundry/devcontainer`
+* **Tag Families**:
+  * `latest` – Most recent stable main build
+  * `main` – Moving pointer to HEAD of main
+  * `main-<branch-sha>` – Immutable build for a specific main commit
+  * `pr-<number>` – Ephemeral preview for a pull request
+  * `vscode-<vscode-sha>` – Locks VS Code Server version (container content may still move)
+  * `vscode-<vscode-sha>-<branch-sha>` – Fully reproducible (VS Code Server + container commit)
 
-**Recommended**: Use `latest` for stable deployments or `vscode-<vscode-commit-sha>` for reproducible builds with specific VS Code Server versions.
+Recommended:
+* Daily development: `latest`
+* CI / Reproducibility: `vscode-<vscode-sha>-<branch-sha>`
+* VS Code Server pin only: `vscode-<vscode-sha>`
 
 ## 🚀 Quick Start
 
@@ -39,15 +55,11 @@ Add this to your `.devcontainer/devcontainer.json`:
 
 ### Using in SDF Trusted Research Environment
 
-For detailed instructions on setting up and using this dev container within the SDF Trusted Research Environment, see:
-
-**[📋 SDF TRE Setup Guide](SDF_TRE_SETUP.md)**
-
-This includes:
-- Manual Dev Containers extension installation
-- TRE-specific configuration requirements
-- Proxy and network setup
-- Troubleshooting TRE-specific issues
+See the **[SDF TRE Setup Guide](SDF_TRE_SETUP.md)** for:
+* Manual Dev Containers extension install & extraction
+* Podman configuration
+* Proxy / network specifics
+* Troubleshooting in constrained environments
 
 ### Using This Repository Directly
 
@@ -57,10 +69,12 @@ This includes:
 
 ## 📚 Documentation
 
-- [SDF TRE Setup Guide](SDF_TRE_SETUP.md) - Complete setup guide for SDF Trusted Research Environment
-- [Dev Container Details](DEVCONTAINER.md) - Complete documentation about the container
-- [Build & Publish Guide](docs/BUILD_PUBLISH_CONTAINER.md) - Guide for building and publishing containers
-- [Dev Container Spec](https://containers.dev) - Learn more about dev containers
+| Topic | Reference |
+|-------|-----------|
+| SDF TRE usage | `SDF_TRE_SETUP.md` |
+| Full container internals | `DEVCONTAINER.md` |
+| Reusable publish workflow | `docs/BUILD_PUBLISH_CONTAINER.md` |
+| Dev Container Specification | https://containers.dev |
 
 ## 🛠️ What's Included
 
@@ -71,13 +85,14 @@ This includes:
 - **Shell**: Zsh with Oh My Zsh (via common-utils feature)
 - **Quarto**: Document publishing platform (latest version)
 - **Marimo**: Markdown presentation tool, alternative to Jupyter Notebooks
-- **VS Code Extensions**:
-  - Continue (AI coding assistant)
-  - Python Black formatter
-  - Jupyter notebook support
+- **VS Code Extensions (curated)**:
+  - Continue (AI assistant)
+  - Black (Python formatting)
+  - Jupyter
   - Marimo
   - Markdown All in One
   - Rainbow CSV
+  - (See `.devcontainer/vscode-init/extensions-to-install.txt` for authoritative list)
 - **VS Code Server**: Pre-installed for immediate development
 
 ## 📊 R Language Support
@@ -97,41 +112,50 @@ This dev container includes comprehensive R language support through the [Rocker
 
 ## ⚙️ VS Code Server
 
-The container comes with VS Code Server pre-installed for immediate development. For TRE-specific VS Code Server configuration, see the [SDF TRE Setup Guide](SDF_TRE_SETUP.md).
+Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT`. For environment-specific considerations (e.g. TRE) see `SDF_TRE_SETUP.md`.
 
 ## Adding New Extensions
 To add new VS Code extensions to the container, follow these steps:
 1. Open the appropriate file in `.devcontainer/vscode-init/`:
    - `extensions-to-install.txt` for extensions to install directly
-   - `extensions-to-download.txt` for extensions that need to be downloaded first
+   - `extensions-to-download.txt` for extensions that need to be downloaded
 2. Add the identifier of the desired extension in the format `publisher.extensionName` on a new line.
 3. Save the changes to the extension file.
 4. Commit and push the changes to your repository to trigger the build workflow with the updated extensions
 
-## 🔄 Automated Builds
+## 🔄 Automated Builds & Tag Strategy
 
-The container is built automatically with smart tagging:
+Workflow: `.github/workflows/build-devcontainer.yml`
 
-- **Pull Requests**: Creates `pr-<number>` tags for testing (uses default VS Code Server commit)
-- **Manual Dispatch**: Creates production tags with custom VS Code Server commit hash
-  - Required input: VS Code Server commit hash
-  - Creates `latest`, `main`, `vscode-<vscode-commit-sha>`, and commit-based tags
-- **Platform**: linux/amd64 optimized for development speed
+Triggers:
+* Pull Requests touching devcontainer/workflow files → build + `pr-<number>` tag
+* Manual dispatch (with required `vscode_commit` input) → publish full tag set
 
-### Manual Build Process
+Outputs per production run:
+* `latest`, `main`, `main-<branch-sha>`
+* `vscode-<vscode-sha>`, `vscode-<vscode-sha>-<branch-sha>`
 
-To create a production build with a specific VS Code Server version:
+Manual build steps:
+1. Open Actions → Build and Publish Dev Container
+2. Run workflow, supplying VS Code Server commit hash
+3. Await completion & verify tags on GHCR package page
 
-1. Go to [Actions → Build and Publish Dev Container](../../actions/workflows/build-devcontainer.yml)
-2. Click "Run workflow"
-3. Enter the desired VS Code Server commit hash (required)
-4. Click "Run workflow"
+Tag usage quick reference:
+| Need | Tag |
+|------|-----|
+| Stable rolling | `latest` |
+| Immutable main snapshot | `main-<sha>` |
+| Test PR | `pr-<number>` |
+| Pin VS Code Server only | `vscode-<vscode-sha>` |
+| Full reproducibility | `vscode-<vscode-sha>-<sha>` |
 
-This ensures all published builds use the correct VS Code Server version and prevents automatic builds with mismatched versions.
+Reusable generic Docker workflow documentation: see `docs/BUILD_PUBLISH_CONTAINER.md`.
 
-### Tag Strategy
-- Use `latest` for the most recent stable release
-- Use `main-<commit-sha>` when you need reproducible builds
-- Use `pr-<number>` tags to test specific pull request changes
-- Use `vscode-<vscode-commit-sha>` tags to match specific VS Code Server versions
-- Use `vscode-<vscode-commit-sha>-<container-commit-sha>` tags for complete reproducibility (specific VS Code Server + container version)
+---
+## 🤝 Contributing & License
+
+Contribution workflow is standard GitHub Flow. See section above plus open issues for opportunities.
+
+License: [MIT](LICENSE)
+
+---

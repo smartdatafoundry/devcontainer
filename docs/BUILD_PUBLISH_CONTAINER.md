@@ -22,7 +22,7 @@ on:
 
 jobs:
   publish:
-    uses: smartdatafoundry/devcontainer/.github/workflows/build-publish-container.yml@v1.0.0
+  uses: smartdatafoundry/devcontainer/.github/workflows/build-publish-container.yml@v1.0.0
     with:
       dockerfile: Dockerfile # Optional, defaults to 'Dockerfile'
       image-name: ${{ github.repository }} # Optional, defaults to repo name
@@ -91,11 +91,11 @@ For further help, consult the GitHub Actions documentation or reach out to your 
 | Use Case | Recommended Tag | Example | Benefits |
 |----------|----------------|---------|----------|
 | **Development** | `latest` | `ghcr.io/smartdatafoundry/devcontainer:latest` | Always up-to-date, stable |
-| **Production/CI** | `vscode-<vscode-sha>-<sha>` | `ghcr.io/smartdatafoundry/devcontainer:vscode-f220831-abc1234` | Reproducible, immutable, specific VS Code Server |
+| **Production/CI** | `vscode-<vscode-sha>-<branch-sha>` | `ghcr.io/smartdatafoundry/devcontainer:vscode-f220831-abc1234` | Reproducible, immutable, specific VS Code Server + container commit |
 | **VS Code Version Match** | `vscode-<vscode-sha>` | `ghcr.io/smartdatafoundry/devcontainer:vscode-f220831` | Match specific VS Code Server version |
 | **Testing PRs** | `pr-<number>` | `ghcr.io/smartdatafoundry/devcontainer:pr-42` | Test specific changes |
 | **Latest Main** | `main` | `ghcr.io/smartdatafoundry/devcontainer:main` | Latest main branch |
 
 ### Finding Available Tags
 
-Visit the [GitHub Container Registry page](https://github.com/smartdatafoundry/devcontainer/pkgs/container/devcontainer) to see all available tags and their creation dates.
+Visit the [GitHub Container Registry page](https://github.com/smartdatafoundry/devcontainer/pkgs/container/devcontainer) to see available tags and creation dates. See also high-level tag usage guidance in the top-level `README.md`.
