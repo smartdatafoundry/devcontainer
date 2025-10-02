@@ -10,6 +10,7 @@ mechatroner.rainbow-csv
 ms-python.black-formatter
 ms-toolsai.datawrangler
 ms-toolsai.jupyter
+openai.chatgpt
 REditorSupport.r
 REditorSupport.r-syntax
 yzhang.markdown-all-in-one

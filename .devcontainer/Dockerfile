@@ -8,6 +8,10 @@ ENV VSCODE_COMMIT=${VSCODE_COMMIT}
 
 # Copy and run VS Code installation files
 COPY ./vscode-init /opt/vscode-init
+
+# Copy Codex config
+COPY ./codex-config.toml /root/.codex/config.toml
+
 RUN cd /opt/vscode-init \ 
     && ./00-install-vscode-server.sh ${VSCODE_COMMIT} \
     && ./01-install-extensions.sh ${VSCODE_COMMIT} \

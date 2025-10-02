@@ -1,0 +1,72 @@
+# Default Codex Configuration for gpt-oss:20b via Ollama
+# This configuration sets up Codex to use the gpt-oss:20b model through a local Ollama instance
+
+# Default model to use
+model = "gpt-oss:20b"
+
+# Default model provider
+model_provider = "ollama"
+
+# Approval policy - change to "never" for fully automated operation, or "untrusted" for safety
+approval_policy = "untrusted"
+
+# Sandbox mode for security
+sandbox_mode = "read-only"
+
+# Model provider configurations
+[model_providers.ollama]
+# Display name for the provider
+name = "Ollama Local"
+
+# Base URL for Ollama API (default local installation)
+# Change this if your Ollama instance is running on a different host/port
+base_url = "http://host.containers.internal:11434/v1"
+
+# Environment variable for API key (Ollama typically doesn't require authentication for local usage)
+# You can set OLLAMA_API_KEY if your setup requires it, or remove this line
+env_key = "OLLAMA_API_KEY"
+
+# Use the chat completions API (compatible with OpenAI API format)
+wire_api = "chat"
+
+# Optional: Additional configuration
+# request_max_retries = 4
+# stream_max_retries = 5
+
+# Optional: Custom HTTP headers if needed
+# [model_providers.ollama.http_headers]
+# "User-Agent" = "Codex-CLI/1.0"
+
+# Optional: Query parameters if needed
+# [model_providers.ollama.query_params]
+# "stream" = "true"
+
+# History configuration
+[history]
+persistence = "save-all"
+
+# File opener configuration for VS Code integration
+file_opener = "vscode"
+
+# Optional: Hide reasoning events for cleaner output
+# hide_agent_reasoning = true
+
+# Optional: MCP servers configuration (uncomment and configure as needed)
+# [mcp_servers.example-server]
+# command = "npx"
+# args = ["-y", "@your/mcp-server"]
+# env = { "API_KEY" = "your-api-key" }
+
+# Optional: Custom instructions file
+# experimental_instructions_file = "/path/to/your/instructions.md"
+
+# Optional: TUI configuration
+[tui]
+notifications = false
+
+# Optional: Shell environment policy
+[shell_environment_policy]
+inherit = "core"
+ignore_default_excludes = false
+exclude = []
+set = {}

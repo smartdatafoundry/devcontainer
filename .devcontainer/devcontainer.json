@@ -13,7 +13,6 @@
 	"features": {
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
-			"toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,poetry,marimo[recommended]",
 			"version": "os-provided"
 		},
 		"ghcr.io/devcontainers/features/common-utils:2": {
@@ -22,8 +21,7 @@
 			"installOhMyZsh": true,
 			"installOhMyZshConfig": true,
 			"upgradePackages": true,
-			"nonFreePackages": true,
-			"username": "automatic",
+			"username": "none",
 			"userUid": "automatic",
 			"userGid": "automatic"
 		},
@@ -38,8 +36,10 @@
 			"installRMarkdown": true,
 			"installRadian": true,
 			"installVscDebugger": true,
+			"useTesting": true,
 			"vscodeRSupport": "full"
-		}
+		},
+		"ghcr.io/jsburckhardt/devcontainer-features/codex:1": {}
 		// Example of adding R packages via apt during build:
 		// Uncomment the following lines to install the 'curl' package for R
 		// "features": {
