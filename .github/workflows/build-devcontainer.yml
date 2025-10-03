@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       vscode_commit:
-        description: 'VS Code commit hash to use (defaults to Dockerfile ARG default if not provided)'
+        description: 'VS Code commit hash to use (defaults to Dockerfile declaration if not provided)'
         required: false
         type: string
 
@@ -78,11 +78,17 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=ref,event=tag
+            # Tags for default branch (main) only
             type=sha,prefix={{branch}}-,enable={{is_default_branch}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }}
-            type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}}
-
+            type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }},enable={{is_default_branch}}
+            type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}},enable={{is_default_branch}}
+            # Tags for PRs only
+            type=raw,value=pr-${{ github.event.number }}-${{ steps.vscode-commit.outputs.vscode_short }},enable={{is_pr}}
+            type=raw,value=pr-${{ github.event.number }}-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}},enable={{is_pr}}
+            # Tags for other branches (not main, not PR)
+            type=raw,value={{branch}}-${{ steps.vscode-commit.outputs.vscode_short }},enable={{is_branch}}
+            type=raw,value={{branch}}-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}},enable={{is_branch}}
       - name: Extract tag names only
         id: tags
         run: |
