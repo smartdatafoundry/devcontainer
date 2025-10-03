@@ -8,10 +8,12 @@ model = "gpt-oss:20b"
 model_provider = "ollama"
 
 # Approval policy - change to "never" for fully automated operation, or "untrusted" for safety
-approval_policy = "untrusted"
+# approval_policy = "untrusted"
+approval_policy = "on-request"
 
 # Sandbox mode for security
-sandbox_mode = "read-only"
+# sandbox_mode = "read-only"
+sandbox_mode = "workspace-write"
 
 # Model provider configurations
 [model_providers.ollama]
@@ -24,7 +26,7 @@ base_url = "http://host.containers.internal:11434/v1"
 
 # Environment variable for API key (Ollama typically doesn't require authentication for local usage)
 # You can set OLLAMA_API_KEY if your setup requires it, or remove this line
-env_key = "OLLAMA_API_KEY"
+# env_key = "OLLAMA_API_KEY"
 
 # Use the chat completions API (compatible with OpenAI API format)
 wire_api = "chat"
