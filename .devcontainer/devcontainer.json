@@ -28,6 +28,8 @@
 			"userGid": "automatic"
 		},
 		"ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
+			"installTinyTex": true,
+			"installChromium": true,
 			"version": "latest"
 		},
 		// R language support, https://github.com/rocker-org/devcontainer-features/tree/main/src/r-apt
@@ -40,7 +42,15 @@
 			"useTesting": true,
 			"vscodeRSupport": "full"
 		},
-		"ghcr.io/jsburckhardt/devcontainer-features/codex:1": {}
+		"ghcr.io/jsburckhardt/devcontainer-features/codex:1": {},
+		"ghcr.io/duduribeiro/devcontainer-features/tmux:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers-extra/features/npm-package:1": {
+			"package": "continuedev/cli",
+			"version": "latest"
+		},
+		"ghcr.io/braun-daniel/devcontainer-features/fzf:1": {}
 
 		// Example of adding R packages via apt during build:
 		// Uncomment the following lines to install the 'curl' package for R

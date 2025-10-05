@@ -1,0 +1,101 @@
+name: Local Assistant
+version: 1.0.0
+schema: v1
+models:
+  # - name: Llama 3.1 8B
+  #   model: llama3.1:8b
+  #   provider: openai
+  #   apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+  #   apiKey: ${{ secrets.OPENWEB_API_KEY }}
+  #   roles:
+  #     - chat
+  #     - edit
+  #     - apply
+
+  - name: gemma3 4B
+    model: gemma3:4b
+    provider: openai
+    apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+    apiKey: ${{ secrets.OPENWEB_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+
+  - name: deepseek-r1 8b
+    model: deepseek-r1:8b
+    provider: openai
+    apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+    apiKey: ${{ secrets.OPENWEB_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+
+  - name: qwen3 8B
+    model: qwen3:8b
+    provider: openai
+    apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+    apiKey: ${{ secrets.OPENWEB_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+
+  - name: Nomic Embed
+    model: nomic-embed-text:latest
+    provider: openai
+    apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+    apiKey: ${{ secrets.OPENWEB_API_KEY }}
+    embedOptions:
+      maxChunkSize: 8192
+    roles:
+      - embed
+
+  - name: Qwen 2.5b Autocomplete Model
+    model: qwen2.5-coder:1.5b
+    provider: openai
+    apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+    apiKey: ${{ secrets.OPENWEB_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+    defaultCompletionOptions:
+      contextLength: 32768
+      maxTokens: 8192
+
+  - name: gpt-oss-20b
+    provider: openai
+    model: bedrock.openai.gpt-oss-20b-1:0
+    apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+    apiKey: ${{ secrets.OPENWEB_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+    
+  # - name: Qwen3-Coder-30B-A3B-Instruct
+  #   provider: openai
+  #   model: bedrock.qwen.qwen3-coder-30b-a3b-v1:0
+  #   apiBase: ${{ secrets.OPENWEB_BASE_URL }}
+  #   apiKey: ${{ secrets.OPENWEB_API_KEY }}
+  #   roles:
+  #     - chat
+  #     - edit
+  #     - apply
+
+context:
+  - provider: code
+  - provider: currentFile
+  - provider: codebase
+  - provider: docs
+  - provider: diff
+  - provider: file  
+  - provider: problems
+  - provider: repo-map
+  - provider: terminal
+  - provider: tree

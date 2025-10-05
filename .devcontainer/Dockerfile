@@ -12,6 +12,10 @@ COPY ./vscode-init /opt/vscode-init
 # Copy Codex config
 COPY ./codex-config.toml /root/.codex/config.toml
 
+# Copy Continue Dev config
+COPY ./continue-config.toml /root/.continue/config.toml
+COPY ./continue.env /root/.continue/.env
+
 RUN cd /opt/vscode-init \ 
     && ./00-install-vscode-server.sh ${VSCODE_COMMIT} \
     && ./01-install-extensions.sh ${VSCODE_COMMIT} \
