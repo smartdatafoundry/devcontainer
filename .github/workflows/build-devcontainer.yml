@@ -84,8 +84,8 @@ jobs:
             type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }},enable={{is_default_branch}}
             type=raw,value=vscode-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}},enable={{is_default_branch}}
             # Tags for PRs only
-            type=raw,value=pr-${{ github.event.number }}-${{ steps.vscode-commit.outputs.vscode_short }},enable={{is_pr}}
-            type=raw,value=pr-${{ github.event.number }}-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}},enable={{is_pr}}
+            type=ref,prefix=pr-,suffix=-${{ steps.vscode-commit.outputs.vscode_short }},event=pr,enable=true
+            type=ref,prefix=pr-,suffix=-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}},event=pr,enable=true
             # Tags for other branches (not main, not PR)
             type=raw,value={{branch}}-${{ steps.vscode-commit.outputs.vscode_short }},enable={{is_branch}}
             type=raw,value={{branch}}-${{ steps.vscode-commit.outputs.vscode_short }}-{{sha}},enable={{is_branch}}
