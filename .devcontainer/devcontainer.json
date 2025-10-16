@@ -46,10 +46,10 @@
 		"ghcr.io/duduribeiro/devcontainer-features/tmux:1": {
 			"version": "latest"
 		},
-		"ghcr.io/devcontainers-extra/features/npm-package:1": {
-			"package": "continuedev/cli",
-			"version": "latest"
-		},
+		// "ghcr.io/devcontainers-extra/features/npm-package:1": {
+		// 	"package": "continuedev/cli",
+		// 	"version": "latest"
+		// },
 		"ghcr.io/braun-daniel/devcontainer-features/fzf:1": {}
 
 		// Example of adding R packages via apt during build:

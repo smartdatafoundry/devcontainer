@@ -5,7 +5,8 @@ charliermarsh.ruff
 Continue.continue
 DavidAnson.vscode-markdownlint
 eamodio.gitlens
-marimo-team.vscode-marimo
+# The marimo extension has been removed from the marketplace whilst it is being rewritten.
+# marimo-team.vscode-marimo
 mechatroner.rainbow-csv
 ms-python.black-formatter
 ms-toolsai.datawrangler
