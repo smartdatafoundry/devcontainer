@@ -8,7 +8,7 @@ eamodio.gitlens
 # The marimo extension has been removed from the marketplace whilst it is being rewritten.
 # marimo-team.vscode-marimo
 mechatroner.rainbow-csv
---pre-release ms-ossdata.vscode-pgsql
+ms-ossdata.vscode-pgsql --pre-release
 ms-python.black-formatter
 ms-toolsai.datawrangler
 ms-toolsai.jupyter
