@@ -42,15 +42,15 @@
 			"useTesting": true,
 			"vscodeRSupport": "full"
 		},
-		"ghcr.io/jsburckhardt/devcontainer-features/codex:1": {},
-		"ghcr.io/duduribeiro/devcontainer-features/tmux:1": {
+		"ghcr.io/devcontainers-extra/features/npm-package:1": {
+			"package": "@continuedev/cli,@openai/codex,@qwen-code/qwen-code",
 			"version": "latest"
 		},
-		// "ghcr.io/devcontainers-extra/features/npm-package:1": {
-		// 	"package": "continuedev/cli",
-		// 	"version": "latest"
-		// },
-		"ghcr.io/braun-daniel/devcontainer-features/fzf:1": {}
+		"ghcr.io/devcontainers-extra/features/apt-packages:1": {
+			"clean_ppas": true,
+			"preserve_apt_list": true,
+			"packages": "busybox,curl,fzf,htop,postgresql-client"
+		}
 
 		// Example of adding R packages via apt during build:
 		// Uncomment the following lines to install the 'curl' package for R
