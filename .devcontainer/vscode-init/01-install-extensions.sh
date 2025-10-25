@@ -24,7 +24,7 @@ fi
 echo "Installing VS Code extensions from ${EXTENSIONS_FILE}..."
 
 # Read extensions from file, remove comments and empty lines, then install all at once
-extensions=$(grep -v '^#' "${EXTENSIONS_FILE}" | grep -v '^$' | tr -d '\r' | tr '\n' ' ')
+extensions=$(grep -v '^#' "${EXTENSIONS_FILE}" | grep -v '^$' | tr -d '\r')
 
 if [ -z "${extensions}" ]; then
     echo "No extensions found in ${EXTENSIONS_FILE}"
@@ -34,7 +34,7 @@ fi
 echo "Extensions to install: ${extensions}"
 
 # Install all extensions in a single command
-"${VSCODE_SERVER_HOME}/bin/code-server" --accept-server-license-terms $(echo "${extensions}" | sed 's/[^ ]* */--install-extension &/g')
+"${VSCODE_SERVER_HOME}/bin/code-server" --accept-server-license-terms $(echo "${extensions}" | sed 's/^/--install-extension /' | tr '\n' ' ')
 
 echo "VS Code extensions installation completed successfully"
 
