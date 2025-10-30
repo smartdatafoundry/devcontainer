@@ -4,3 +4,9 @@
 # One extension ID per line.
 ms-vscode-remote.remote-containers
 vscodevim.vim
+
+# Extensions that should be installed on the host
+Continue.continue
+ms-toolsai.jupyter-keymap
+openai.chatgpt
+REditorSupport.r-syntax
