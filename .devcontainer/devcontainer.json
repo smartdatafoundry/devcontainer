@@ -42,8 +42,8 @@
 			"useTesting": true,
 			"vscodeRSupport": "full"
 		},
-		"ghcr.io/devcontainers-extra/features/npm-package:1": {
-			"package": "@continuedev/cli,@openai/codex,@qwen-code/qwen-code",
+		"ghcr.io/devcontainers-extra/features/npm-packages:1": {
+			"package": "continuedev/cli,openai/codex,qwen-code/qwen-code",
 			"version": "latest"
 		},
 		"ghcr.io/devcontainers-extra/features/apt-packages:1": {
