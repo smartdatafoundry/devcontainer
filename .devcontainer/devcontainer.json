@@ -13,7 +13,7 @@
 	"features": {
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
-			"toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,poetry,marimo[recommended]",
+			"toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,poetry,marimo[recommended],nvitop",
 			"version": "os-provided"
 		},
 		"ghcr.io/devcontainers/features/common-utils:2": {
@@ -28,9 +28,10 @@
 			"userGid": "automatic"
 		},
 		"ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
+			"installTinyTex": true,
+			"installChromium": true,
 			"version": "latest"
 		},
-
 		// R language support, https://github.com/rocker-org/devcontainer-features/tree/main/src/r-apt
 		"ghcr.io/rocker-org/devcontainer-features/r-apt:0": {
 			"installDevTools": true,
@@ -38,8 +39,19 @@
 			"installRMarkdown": true,
 			"installRadian": true,
 			"installVscDebugger": true,
+			"useTesting": true,
 			"vscodeRSupport": "full"
+		},
+		"ghcr.io/devcontainers-extra/features/npm-packages:1": {
+			"package": "continuedev/cli,openai/codex,qwen-code/qwen-code",
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers-extra/features/apt-packages:1": {
+			"clean_ppas": true,
+			"preserve_apt_list": true,
+			"packages": "busybox,curl,fzf,htop,postgresql-client"
 		}
+
 		// Example of adding R packages via apt during build:
 		// Uncomment the following lines to install the 'curl' package for R
 		// "features": {
