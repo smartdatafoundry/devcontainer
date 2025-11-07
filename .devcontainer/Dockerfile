@@ -13,7 +13,7 @@ COPY ./vscode-init /opt/vscode-init
 COPY ./codex-config.toml /root/.codex/config.toml
 
 # Copy Continue Dev config
-COPY ./continue-config.yaml /root/.continue/config.toml
+COPY ./continue-config.yaml /root/.continue/config.yaml
 COPY ./continue.env /root/.continue/.env
 
 RUN cd /opt/vscode-init \ 
