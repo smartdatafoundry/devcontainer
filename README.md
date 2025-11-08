@@ -92,7 +92,7 @@ Available `devcontainerctl` commands:
 
 #### Manual Setup
 
-For detailed manual setup instructions, see the **[SDF TRE Setup Guide](SDF_TRE_SETUP.md)**.
+For detailed manual setup instructions, see the **[SDF TRE Setup Guide](docs/SDF_TRE_SETUP.md)**.
 
 ### Using This Repository Directly
 
@@ -104,8 +104,8 @@ For detailed manual setup instructions, see the **[SDF TRE Setup Guide](SDF_TRE_
 
 | Topic | Reference |
 |-------|-----------|
-| SDF TRE usage | [`SDF_TRE_SETUP.md`](SDF_TRE_SETUP.md) |
-| Full container internals | [`DEVCONTAINER.md`](DEVCONTAINER.md) |
+| SDF TRE usage | [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md) |
+| Full container internals | [`docs/DEVCONTAINER.md`](docs/DEVCONTAINER.md) |
 | Setup scripts | [`scripts/`](scripts/) directory |
 | Reusable publish workflow | [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md) |
 | Dev Container Specification | https://containers.dev |
@@ -147,7 +147,7 @@ This dev container includes comprehensive R language support through the [Rocker
 
 ## ⚙️ VS Code Server
 
-Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT`. For environment-specific considerations (e.g. TRE) see [`SDF_TRE_SETUP.md`](SDF_TRE_SETUP.md).
+Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT`. For environment-specific considerations (e.g. TRE) see [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md).
 
 ## Adding New Extensions
 To add new VS Code extensions to the container, follow these steps:
@@ -159,6 +159,8 @@ To add new VS Code extensions to the container, follow these steps:
 4. Commit and push the changes to your repository to trigger the build workflow with the updated extensions
 
 ## 🔄 Automated Builds & Tag Strategy
+
+### Build Workflow
 
 Workflow: [`.github/workflows/build-devcontainer.yml`](.github/workflows/build-devcontainer.yml)
 
@@ -185,6 +187,22 @@ Tag usage quick reference:
 | Full reproducibility | `vscode-<vscode-sha>-<sha>` |
 
 Reusable generic Docker workflow documentation: see [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md).
+
+### VS Code Auto-Update Workflow
+
+[![Update VS Code Version](https://github.com/smartdatafoundry/devcontainer/actions/workflows/update-vscode.yml/badge.svg)](https://github.com/smartdatafoundry/devcontainer/actions/workflows/update-vscode.yml)
+
+Workflow: [`.github/workflows/update-vscode.yml`](.github/workflows/update-vscode.yml)
+
+An automated workflow that:
+* Runs daily at 2:00 AM UTC to check for new VS Code releases
+* Compares the latest stable VS Code commit hash with the current version in the Dockerfile
+* Automatically creates a PR when a new version is available
+* Enables auto-merge to update the container once all checks pass
+
+This ensures the devcontainer stays up-to-date with the latest VS Code releases without manual intervention.
+
+For detailed configuration and usage information, see [`docs/VSCODE_AUTO_UPDATE.md`](docs/VSCODE_AUTO_UPDATE.md).
 
 ---
 ## 🤝 Contributing & License

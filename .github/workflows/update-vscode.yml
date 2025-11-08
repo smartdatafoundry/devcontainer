@@ -1,0 +1,141 @@
+name: Update VS Code Version
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-vscode-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get current VS Code commit from Dockerfile
+        id: current
+        run: |
+          CURRENT_COMMIT=$(grep -E '^ARG VSCODE_COMMIT=' .devcontainer/Dockerfile | head -n1 | cut -d= -f2-)
+          echo "Current VS Code commit: $CURRENT_COMMIT"
+          echo "commit=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
+          echo "short=${CURRENT_COMMIT:0:7}" >> $GITHUB_OUTPUT
+
+      - name: Fetch latest stable VS Code commit
+        id: latest
+        run: |
+          # Get the latest stable release info from VS Code GitHub API
+          LATEST_RELEASE="$(curl -s https://api.github.com/repos/microsoft/vscode/releases/latest | jq -r .tag_name)"
+          echo "Latest VS Code release tag: $LATEST_RELEASE"
+          
+          # Get the commit hash for this tag
+          LATEST_COMMIT=$(curl -s "https://api.github.com/repos/microsoft/vscode/git/refs/tags/$LATEST_RELEASE" | jq -r '.object.sha')
+
+          # Validate we have a 40-character hash
+          if ! echo "$LATEST_COMMIT" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "❌ Could not fetch valid commit hash for latest release"
+            exit 1
+          fi
+          
+          echo "Latest VS Code commit: $LATEST_COMMIT"
+          echo "commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+          echo "short=${LATEST_COMMIT:0:7}" >> $GITHUB_OUTPUT
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Check if update needed
+        id: check
+        run: |
+          CURRENT="${{ steps.current.outputs.commit }}"
+          LATEST="${{ steps.latest.outputs.commit }}"
+          
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "✅ VS Code is already up to date"
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "🔄 Update available: $CURRENT -> $LATEST"
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Dockerfile
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          CURRENT="${{ steps.current.outputs.commit }}"
+          LATEST="${{ steps.latest.outputs.commit }}"
+          
+          # Update the ARG line in Dockerfile
+          sed -i "s/ARG VSCODE_COMMIT=$CURRENT/ARG VSCODE_COMMIT=$LATEST/" .devcontainer/Dockerfile
+          
+          echo "✅ Updated Dockerfile"
+          git diff .devcontainer/Dockerfile
+
+      - name: Create Pull Request
+        if: steps.check.outputs.needs_update == 'true'
+        id: create-pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            chore: update VS Code to ${{ steps.latest.outputs.tag }}
+            
+            Update VSCODE_COMMIT from ${{ steps.current.outputs.short }} to ${{ steps.latest.outputs.short }}
+          branch: automated/update-vscode-${{ steps.latest.outputs.short }}
+          delete-branch: true
+          title: 'chore: update VS Code to ${{ steps.latest.outputs.tag }}'
+          body: |
+            ## 🔄 Automated VS Code Update
+            
+            This PR updates the VS Code commit hash to the latest stable release.
+            
+            **Previous version:** `${{ steps.current.outputs.commit }}`
+            **New version:** `${{ steps.latest.outputs.commit }}`
+            **Release tag:** `${{ steps.latest.outputs.tag }}`
+            
+            ### Changes
+            - Updated `VSCODE_COMMIT` in `.devcontainer/Dockerfile`
+            
+            ### Verification
+            This PR will trigger the build workflow to ensure the container builds successfully with the new VS Code version.
+            
+            ---
+            *This PR was created automatically by the [Update VS Code Version](${{ github.server_url }}/${{ github.repository }}/actions/workflows/update-vscode.yml) workflow.*
+          labels: |
+            automated
+            dependencies
+            devcontainer
+
+      - name: Enable auto-merge
+        if: steps.check.outputs.needs_update == 'true' && steps.create-pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create-pr.outputs.pull-request-number }}"
+          
+          # Enable auto-merge with squash merge strategy
+          gh pr merge "$PR_NUMBER" --auto --squash --delete-branch
+          
+          echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+          echo "PR will be automatically merged once all checks pass"
+
+      - name: Summary
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          echo "## 🚀 VS Code Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Previous commit:** \`${{ steps.current.outputs.commit }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**New commit:** \`${{ steps.latest.outputs.commit }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Release tag:** \`${{ steps.latest.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Pull Request:** #${{ steps.create-pr.outputs.pull-request-number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Auto-merge:** Enabled (will merge after checks pass)" >> $GITHUB_STEP_SUMMARY
+
+      - name: No update needed
+        if: steps.check.outputs.needs_update == 'false'
+        run: |
+          echo "## ✅ VS Code Already Up to Date" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Current version:** \`${{ steps.current.outputs.commit }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "No action required." >> $GITHUB_STEP_SUMMARY
