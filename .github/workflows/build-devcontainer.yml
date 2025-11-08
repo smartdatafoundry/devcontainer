@@ -1,12 +1,12 @@
 name: Build and Publish Dev Container
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
-    paths:
-      - '.devcontainer/**'
-      - '.github/workflows/build-devcontainer.yml'
   workflow_dispatch:
     inputs:
       vscode_commit:
