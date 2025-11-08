@@ -7,7 +7,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 VSCODE_TAG="${2:-vscode-$(code --version | sed -n '2p' | cut -c1-7)}"
-CONTAINERS="devcontainer"
+CONTAINER_NAME="devcontainer"
 
 show_usage() {
     echo "Combined script to start or stop the devcontainer"
@@ -15,15 +15,15 @@ show_usage() {
 }
 
 get_latest_devcontainer() {
-   local rc="${1:-false}"
+    local rc="${1:-false}"
     
-        # print a message after 30 seconds if the pull is still ongoing
+    # print a message after 30 seconds if the pull is still ongoing
     (
-        sleep 10
+        sleep 30
         echo -e "\n${YELLOW}Updates can take some time, please be patient...${NC}\n"
     ) &
     background_pid=$!
-    trap "kill $background_pid 2>/dev/null" EXIT
+    trap "kill $background_pid 2>/dev/null" RETURN
 
     # Always attempt to install the aligned devcontainer
     echo "Checking for devcontainer updates..."
@@ -45,8 +45,8 @@ start() {
     get_latest_devcontainer
     
     # Stop and remove any existing containers with these names
-    podman stop $CONTAINERS 2>/dev/null
-    podman rm $CONTAINERS 2>/dev/null
+    podman stop $CONTAINER_NAME 2>/dev/null
+    podman rm $CONTAINER_NAME 2>/dev/null
     
     # Start devcontainer
     podman run -d \
@@ -63,35 +63,31 @@ start() {
 
 stop() {
     echo "Stopping devcontainer service..."
-    podman stop $CONTAINERS 2>/dev/null
+    podman stop $CONTAINER_NAME 2>/dev/null
     echo "devcontainer stopped."
-}
-
-restart() {
-    echo "Restarting devcontainer service..."
-    podman stop $CONTAINERS 2>/dev/null
-    podman start $CONTAINERS 2>/dev/null
-    echo "devcontainer restarted."
 }
 
 remove() {
     echo "Stopping and removing devcontainer service..."
-    podman stop $CONTAINERS 2>/dev/null
-    podman rm $CONTAINERS 2>/dev/null
+    podman stop $CONTAINER_NAME 2>/dev/null
+    podman rm $CONTAINER_NAME 2>/dev/null
     echo "devcontainer stopped and removed."
+}
+
+shell() {
+    echo "Opening shell in devcontainer..."
+    podman exec -it $CONTAINER_NAME /bin/bash
 }
 
 show_status() {
     echo "devcontainer Service Status:"
     echo "==========================="
-    for container in $CONTAINERS; do
-        status=$(podman ps -a --filter "name=$container" --format "{{.Status}}" 2>/dev/null)
-        if [ -n "$status" ]; then
-            echo "$container: $status"
-        else
-            echo "$container: Not found"
-        fi
-    done
+    status=$(podman ps -a --filter "name=$CONTAINER_NAME" --format "{{.Status}}" 2>/dev/null)
+    if [ -n "$status" ]; then
+        echo "$CONTAINER_NAME: $status"
+    else
+        echo "$CONTAINER_NAME: Not found"
+    fi
 }
 
 update() {
@@ -119,8 +115,14 @@ case "${1:-}" in
     remove)
         remove
         ;;
+    shell)
+        shell
+        ;;
     sync)
         get_latest_devcontainer
+        ;;
+    sync-rc)
+        get_latest_devcontainer true
         ;;
     update)
         update

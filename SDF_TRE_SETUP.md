@@ -234,7 +234,7 @@ This approach leverages container technology directly while maintaining the abil
 The container ships with VS Code Server pre-installed. To ensure reproducibility or to match an existing TRE host version, specify the commit hash:
 
 1. Check your TRE VS Code version via _Help > About_
-2. The VS Code commit value is declared in the [`Dockerfile`](.devcontainer/Dockerfile) and can be overriden via workflow inputs.
+2. The VS Code commit value is declared in the [`Dockerfile`](.devcontainer/Dockerfile) and can be overridden via workflow inputs.
 
 ## Troubleshooting
 
