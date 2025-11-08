@@ -126,42 +126,57 @@ jobs:
             
             echo "=== Dev container validation completed! ==="
       
-      # Using the custom Trivy Security Scan action from this repository
-      # - name: Security Scan
-      #   id: security-scan
-      #   uses: smartdatafoundry/trivy-security-scan@v1.0.0
-      #   with:
-      #     image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      #     registry: ${{ env.REGISTRY }}
-      #     severity: 'CRITICAL,HIGH'
-      #     detailed-severity: 'CRITICAL,HIGH,MEDIUM,LOW'
-      #     ignore-unfixed: 'true'
-      #     exit-code: '0'
-      #     artifact-name: 'security-scan-results'
-      #     artifact-retention-days: '30'
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     post-pr-comment: 'true'
+      # Free up disk space before security scan to prevent "no space left on device" errors
+      - name: Free Disk Space
+        run: |
+          echo "=== Disk space before cleanup ==="
+          df -h
+          echo "=== Removing unnecessary files ==="
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune -af
+          sudo apt-get clean
+          echo "=== Disk space after cleanup ==="
+          df -h
 
-      # # Optional: Handle scan results programmatically
-      # - name: Process scan results
-      #   run: |
-      #     echo "Security scan status: ${{ steps.security-scan.outputs.scan-status }}"
-      #     echo "Vulnerabilities found: ${{ steps.security-scan.outputs.vulnerability-count }}"
-      #     echo "Artifact ID: ${{ steps.security-scan.outputs.artifact-id }}"
+      # Using the custom Trivy Security Scan action from this repository
+      - name: Security Scan
+        id: security-scan
+        uses: smartdatafoundry/trivy-security-scan@v1.0.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          registry: ${{ env.REGISTRY }}
+          severity: 'CRITICAL,HIGH'
+          detailed-severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+          ignore-unfixed: 'true'
+          exit-code: '0'
+          artifact-name: 'security-scan-results'
+          artifact-retention-days: '30'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          post-pr-comment: 'true'
+
+      # Optional: Handle scan results programmatically
+      - name: Process scan results
+        run: |
+          echo "Security scan status: ${{ steps.security-scan.outputs.scan-status }}"
+          echo "Vulnerabilities found: ${{ steps.security-scan.outputs.vulnerability-count }}"
+          echo "Artifact ID: ${{ steps.security-scan.outputs.artifact-id }}"
           
-      #     # You can add custom logic here based on the scan results
-      #     if [ "${{ steps.security-scan.outputs.scan-status }}" = "vulnerabilities_found" ]; then
-      #       echo "⚠️ Security vulnerabilities detected!"
-      #       echo "Consider reviewing the security report before deploying."
+          # You can add custom logic here based on the scan results
+          if [ "${{ steps.security-scan.outputs.scan-status }}" = "vulnerabilities_found" ]; then
+            echo "⚠️ Security vulnerabilities detected!"
+            echo "Consider reviewing the security report before deploying."
             
-      #       # Optionally, you could fail the build for critical vulnerabilities:
-      #       # if [ "${{ steps.security-scan.outputs.vulnerability-count }}" -gt "10" ]; then
-      #       #   echo "❌ Too many vulnerabilities found (> 10), failing build"
-      #       #   exit 1
-      #       # fi
-      #     else
-      #       echo "✅ No critical or high severity vulnerabilities found!"
-      #     fi
+            # Optionally, you could fail the build for critical vulnerabilities:
+            # if [ "${{ steps.security-scan.outputs.vulnerability-count }}" -gt "10" ]; then
+            #   echo "❌ Too many vulnerabilities found (> 10), failing build"
+            #   exit 1
+            # fi
+          else
+            echo "✅ No critical or high severity vulnerabilities found!"
+          fi
 
       - name: Container info
         if: success()
