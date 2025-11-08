@@ -3,7 +3,7 @@
 {
 	"name": "Python Development Environment",
 	"build": {
-		"dockerfile": "Dockerfile",
+		"dockerfile": "../Dockerfile",
 		"args": {
 			"VSCODE_COMMIT": "${localEnv:VSCODE_COMMIT}"
 		}

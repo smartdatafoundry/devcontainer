@@ -9,7 +9,7 @@ The `update-vscode.yml` GitHub Actions workflow automatically checks for new VS 
 1. **Daily Check**: The workflow runs every day at 2:00 AM UTC (configurable via cron schedule)
 2. **Version Detection**: Queries the GitHub API to get the latest stable VS Code release tag
 3. **Commit Hash Retrieval**: Fetches the commit hash associated with the latest release tag
-4. **Comparison**: Compares the latest release commit hash with the current `VSCODE_COMMIT` in `.devcontainer/Dockerfile`
+4. **Comparison**: Compares the latest release commit hash with the current `VSCODE_COMMIT` in `Dockerfile`
 5. **Update Process**: If a new version is found:
    - Updates the `VSCODE_COMMIT` argument in the Dockerfile
    - Creates a new branch named `automated/update-vscode-<short-commit-hash>`
@@ -233,7 +233,7 @@ This PR updates the VS Code commit hash to the latest stable release.
 **Release tag:** `1.95.0`
 
 ### Changes
-- Updated `VSCODE_COMMIT` in `.devcontainer/Dockerfile`
+- Updated `VSCODE_COMMIT` in `Dockerfile`
 
 ### Verification
 This PR will trigger the build workflow to ensure the container builds successfully with the new VS Code version.

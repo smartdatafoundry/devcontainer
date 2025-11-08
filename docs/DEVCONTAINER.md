@@ -161,7 +161,7 @@ export VSCODE_COMMIT=0f0d87fa9e96c856c5212fc86db137ac0d783365
 devcontainer build --workspace-folder .
 ```
 
-This keeps maintenance simple: update the default by editing a single line in [`Dockerfile`](.devcontainer/Dockerfile) with support for overrides when needed via workflow inputs.
+This keeps maintenance simple: update the default by editing a single line in [`Dockerfile`](../Dockerfile) with support for overrides when needed via workflow inputs.
 
 ## 📁 Repository Structure
 

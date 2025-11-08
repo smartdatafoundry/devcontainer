@@ -20,7 +20,7 @@ jobs:
       - name: Get current VS Code commit from Dockerfile
         id: current
         run: |
-          CURRENT_COMMIT=$(grep -E '^ARG VSCODE_COMMIT=' .devcontainer/Dockerfile | head -n1 | cut -d= -f2-)
+          CURRENT_COMMIT=$(grep -E '^ARG VSCODE_COMMIT=' Dockerfile | head -n1 | cut -d= -f2-)
           echo "Current VS Code commit: $CURRENT_COMMIT"
           echo "commit=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
           echo "short=${CURRENT_COMMIT:0:7}" >> $GITHUB_OUTPUT
@@ -67,10 +67,10 @@ jobs:
           LATEST="${{ steps.latest.outputs.commit }}"
           
           # Update the ARG line in Dockerfile
-          sed -i "s/ARG VSCODE_COMMIT=$CURRENT/ARG VSCODE_COMMIT=$LATEST/" .devcontainer/Dockerfile
+          sed -i "s/ARG VSCODE_COMMIT=$CURRENT/ARG VSCODE_COMMIT=$LATEST/" Dockerfile
           
           echo "✅ Updated Dockerfile"
-          git diff .devcontainer/Dockerfile
+          git diff Dockerfile
 
       - name: Create Pull Request
         if: steps.check.outputs.needs_update == 'true'
@@ -95,7 +95,7 @@ jobs:
             **Release:** `${{ steps.latest.outputs.release }}`
             
             ### Changes
-            - Updated `VSCODE_COMMIT` in `.devcontainer/Dockerfile`
+            - Updated `VSCODE_COMMIT` in `Dockerfile`
             
             ### Verification
             This PR will trigger the build workflow to ensure the container builds successfully with the new VS Code version.

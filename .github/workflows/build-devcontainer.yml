@@ -40,7 +40,7 @@ jobs:
             SOURCE="workflow_input"
           else
             # Extract default from ARG line: ARG VSCODE_COMMIT=<hash>
-            VSCODE_COMMIT=$(grep -E '^ARG VSCODE_COMMIT=' .devcontainer/Dockerfile | head -n1 | cut -d= -f2-)
+            VSCODE_COMMIT=$(grep -E '^ARG VSCODE_COMMIT=' Dockerfile | head -n1 | cut -d= -f2-)
             if [ -z "$VSCODE_COMMIT" ]; then
               echo "❌ Could not find default VSCODE_COMMIT in Dockerfile" >&2
               exit 1

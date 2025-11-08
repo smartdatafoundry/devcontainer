@@ -7,14 +7,17 @@ ARG VSCODE_COMMIT=7d842fb85a0275a4a8e4d7e040d2625abbf7f084
 ENV VSCODE_COMMIT=${VSCODE_COMMIT}
 
 # Copy and run VS Code installation files
-COPY ./vscode-init /opt/vscode-init
+COPY .devcontainer/vscode-init /opt/vscode-init
 
 # Copy Codex config
-COPY ./codex-config.toml /root/.codex/config.toml
+COPY .devcontainer/codex-config.toml /root/.codex/config.toml
 
 # Copy Continue Dev config
-COPY ./continue-config.yaml /root/.continue/config.yaml
-COPY ./continue.env /root/.continue/.env
+COPY .devcontainer/continue-config.yaml /root/.continue/config.yaml
+COPY .devcontainer/continue.env /root/.continue/.env
+
+# Copy scripts folder
+COPY scripts /opt/scripts
 
 RUN cd /opt/vscode-init \ 
     && ./00-install-vscode-server.sh ${VSCODE_COMMIT} \
