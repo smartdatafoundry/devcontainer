@@ -1,6 +1,6 @@
 # Dev Container for Python & R Development
 
-This repository contains a development container configuration optimized for Python (and first-class R) development, along with automated workflows to build and publish the container image to GitHub Container Registry (GHCR). For high-level usage see `README.md`; this document focuses on implementation details.
+This repository contains a development container configuration optimised for Python (and first-class R) development, along with automated workflows to build and publish the container image to GitHub Container Registry (GHCR). For high-level usage see [`README.md`](README.md); this document focuses on implementation details.
 
 ## 📦 Published Container
 
@@ -74,13 +74,69 @@ This dev container includes:
 * **Quarto**: Latest (document publishing)
 * **Marimo**: Alternative interactive notebook/presentation tool
 * **VS Code Server**: Pre-installed (pin via tag families)
-* **VS Code Extensions**: Curated list (see `.devcontainer/vscode-init/extensions-to-install.txt`)
+* **VS Code Extensions**: Curated list (see [`.devcontainer/vscode-init/extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt))
+* **User Setup Scripts**: Automated deployment and management tools
+
+### User Setup Scripts
+
+The container includes scripts in [`/workspace/scripts/`](scripts/) to simplify deployment and management:
+
+#### [`scripts/devcontainerctl`](scripts/devcontainerctl)
+A comprehensive container lifecycle management script that provides:
+
+**Features:**
+- Automatic image updates with VS Code tag alignment
+- Container lifecycle management (start, stop, restart, remove)
+- Status monitoring
+- Automatic home directory and `/safedata` mounting
+- Proxy configuration inheritance
+- Background update notifications
+
+**Commands:**
+- `start` - Pull latest image matching your VS Code version and start container
+- `stop` - Stop the running container
+- `restart` - Restart the container
+- `status` - Show current container status
+- `sync` - Update to latest matching image (used by cron)
+- `update` - Stop, update, and restart with new image
+- `remove` - Stop and remove the container
+
+**Usage:**
+```bash
+devcontainerctl start              # Start with auto-detected VS Code version
+devcontainerctl start vscode-abc123 # Start with specific tag
+devcontainerctl status             # Check status
+devcontainerctl sync               # Update image (used by daily cron)
+```
+
+#### [`scripts/setup.sh`](scripts/setup.sh)
+One-time setup script that configures your environment:
+
+**What it does:**
+- Creates `~/bin` directory if needed
+- Creates symlink to `devcontainerctl` in `~/bin`
+- Adds `~/bin` to PATH in `~/.bashrc`
+- Configures daily cron job (8:00 AM) to sync images
+
+**Usage:**
+```bash
+# Extract scripts from container first
+podman run --rm -v $HOME:$HOME -w $HOME \
+  ghcr.io/smartdatafoundry/devcontainer:latest \
+  cp -r /workspace/scripts $HOME/devcontainer-scripts
+
+# Run setup
+cd $HOME/devcontainer-scripts
+./setup.sh
+```
+
+After setup, the `devcontainerctl` command will be available system-wide, and your devcontainer image will automatically stay up-to-date.
 
 ## 🔄 Automated Builds
 
 The container is built using GitHub Actions with controlled publishing:
 
-### Build Workflow (`build-devcontainer.yml`)
+### Build Workflow ([`build-devcontainer.yml`](.github/workflows/build-devcontainer.yml))
 - **PR Triggers**: Pull requests automatically build test images (`pr-<number>` tags) using default VS Code Server commit
 - **Manual Dispatch**: Production builds require manual trigger with VS Code Server commit hash
   - **Required Input**: VS Code Server commit hash for reproducible builds
@@ -105,7 +161,7 @@ export VSCODE_COMMIT=0f0d87fa9e96c856c5212fc86db137ac0d783365
 devcontainer build --workspace-folder .
 ```
 
-This keeps maintenance simple: update the default by editing a single line in `Dockerfile` with support for overrides when needed via workflow inputs.
+This keeps maintenance simple: update the default by editing a single line in [`Dockerfile`](.devcontainer/Dockerfile) with support for overrides when needed via workflow inputs.
 
 ## 📁 Repository Structure
 
@@ -122,6 +178,9 @@ This keeps maintenance simple: update the default by editing a single line in `D
 ├── .github/workflows/
 │   ├── build-devcontainer.yml     # Build and publish workflow
 │   └── build-publish-container.yml
+├── scripts/                       # User deployment scripts
+│   ├── devcontainerctl           # Container management script
+│   └── setup.sh                  # One-time setup script
 ├── assets/                        # Documentation assets
 ├── docs/                          # Additional documentation
 ├── DEVCONTAINER.md                # Detailed documentation
@@ -134,7 +193,7 @@ This keeps maintenance simple: update the default by editing a single line in `D
 To customize this dev container for your needs:
 
 1. Fork this repository
-2. Modify `.devcontainer/devcontainer.json`:
+2. Modify [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json):
    - Add/remove features
    - Update VS Code extensions
    - Change base image or configuration
@@ -142,6 +201,7 @@ To customize this dev container for your needs:
 4. Push changes - the container will be built automatically
 
 ## 🏗️ Local Development
+
 ## 🔄 Automated Build Process
 
 The container images are built and published automatically using GitHub Actions with intelligent tagging:
@@ -185,7 +245,7 @@ devcontainer exec --workspace-folder . bash
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes to `.devcontainer/devcontainer.json`
+3. Make your changes to [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json)
 4. Test locally using the devcontainer CLI
 5. Submit a pull request
 

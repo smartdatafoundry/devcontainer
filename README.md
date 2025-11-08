@@ -55,11 +55,44 @@ Add this to your `.devcontainer/devcontainer.json`:
 
 ### Using in SDF Trusted Research Environment
 
-See the **[SDF TRE Setup Guide](SDF_TRE_SETUP.md)** for:
-* Manual Dev Containers extension install & extraction
-* Podman configuration
-* Proxy / network specifics
-* Troubleshooting in constrained environments
+#### Quick Setup with Included Scripts (Recommended)
+
+The devcontainer includes setup scripts for easy deployment in the SDF TRE:
+
+```bash
+# 1. Pull the container image
+ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
+
+# 2. Extract the setup scripts
+podman run --rm -v $HOME:$HOME -w $HOME \
+  ghcr.io/smartdatafoundry/devcontainer:latest \
+  cp -r /workspace/scripts $HOME/devcontainer-scripts
+
+# 3. Run the setup script (one-time setup)
+cd $HOME/devcontainer-scripts
+./setup.sh
+
+# 4. Start your devcontainer
+devcontainerctl start
+```
+
+The setup script will:
+- Create a symlink to `devcontainerctl` in `~/bin`
+- Add `~/bin` to your PATH
+- Configure a daily cron job to keep the image updated
+
+Available `devcontainerctl` commands:
+- `devcontainerctl start` - Pull latest image and start container
+- `devcontainerctl stop` - Stop the container
+- `devcontainerctl restart` - Restart the container
+- `devcontainerctl status` - Check container status
+- `devcontainerctl sync` - Update the container image
+- `devcontainerctl update` - Update and restart with new image
+- `devcontainerctl remove` - Stop and remove the container
+
+#### Manual Setup
+
+For detailed manual setup instructions, see the **[SDF TRE Setup Guide](SDF_TRE_SETUP.md)**.
 
 ### Using This Repository Directly
 
@@ -71,9 +104,10 @@ See the **[SDF TRE Setup Guide](SDF_TRE_SETUP.md)** for:
 
 | Topic | Reference |
 |-------|-----------|
-| SDF TRE usage | `SDF_TRE_SETUP.md` |
-| Full container internals | `DEVCONTAINER.md` |
-| Reusable publish workflow | `docs/BUILD_PUBLISH_CONTAINER.md` |
+| SDF TRE usage | [`SDF_TRE_SETUP.md`](SDF_TRE_SETUP.md) |
+| Full container internals | [`DEVCONTAINER.md`](DEVCONTAINER.md) |
+| Setup scripts | [`scripts/`](scripts/) directory |
+| Reusable publish workflow | [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md) |
 | Dev Container Specification | https://containers.dev |
 
 ## 🛠️ What's Included
@@ -85,6 +119,7 @@ See the **[SDF TRE Setup Guide](SDF_TRE_SETUP.md)** for:
 - **Shell**: Zsh with Oh My Zsh (via common-utils feature)
 - **Quarto**: Document publishing platform (latest version)
 - **Marimo**: Markdown presentation tool, alternative to Jupyter Notebooks
+- **User Setup Scripts**: Automated deployment and management tools ([`scripts/`](scripts/))
 - **VS Code Extensions (curated)**:
   - Continue (AI assistant)
   - Black (Python formatting)
@@ -92,7 +127,7 @@ See the **[SDF TRE Setup Guide](SDF_TRE_SETUP.md)** for:
   - Marimo
   - Markdown All in One
   - Rainbow CSV
-  - (See `.devcontainer/vscode-init/extensions-to-install.txt` for authoritative list)
+  - (See [`.devcontainer/vscode-init/extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt) for authoritative list)
 - **VS Code Server**: Pre-installed for immediate development
 
 ## 📊 R Language Support
@@ -112,20 +147,20 @@ This dev container includes comprehensive R language support through the [Rocker
 
 ## ⚙️ VS Code Server
 
-Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT`. For environment-specific considerations (e.g. TRE) see `SDF_TRE_SETUP.md`.
+Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT`. For environment-specific considerations (e.g. TRE) see [`SDF_TRE_SETUP.md`](SDF_TRE_SETUP.md).
 
 ## Adding New Extensions
 To add new VS Code extensions to the container, follow these steps:
-1. Open the appropriate file in `.devcontainer/vscode-init/`:
-   - `extensions-to-install.txt` for extensions to install directly
-   - `extensions-to-download.txt` for extensions that need to be downloaded
+1. Open the appropriate file in [`.devcontainer/vscode-init/`](.devcontainer/vscode-init/):
+   - [`extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt) for extensions to install directly
+   - [`extensions-to-download.txt`](.devcontainer/vscode-init/extensions-to-download.txt) for extensions that you want to be downloaded
 2. Add the identifier of the desired extension in the format `publisher.extensionName` on a new line.
 3. Save the changes to the extension file.
 4. Commit and push the changes to your repository to trigger the build workflow with the updated extensions
 
 ## 🔄 Automated Builds & Tag Strategy
 
-Workflow: `.github/workflows/build-devcontainer.yml`
+Workflow: [`.github/workflows/build-devcontainer.yml`](.github/workflows/build-devcontainer.yml)
 
 Triggers:
 * Pull Requests touching devcontainer/workflow files → build + `pr-<number>` tag
@@ -149,7 +184,7 @@ Tag usage quick reference:
 | Pin VS Code Server only | `vscode-<vscode-sha>` |
 | Full reproducibility | `vscode-<vscode-sha>-<sha>` |
 
-Reusable generic Docker workflow documentation: see `docs/BUILD_PUBLISH_CONTAINER.md`.
+Reusable generic Docker workflow documentation: see [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md).
 
 ---
 ## 🤝 Contributing & License

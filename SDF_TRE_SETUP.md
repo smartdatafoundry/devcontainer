@@ -4,7 +4,32 @@ This guide provides step-by-step instructions for setting up and using dev conta
 
 ## Quick Start
 
-The quick start is for users familiar with the TRE and using Dev Containers. If you haven't done this setup before, please read the rest of this document instead of the quick start.
+### Automated Setup (Recommended)
+
+For users who want the fastest setup with automatic updates:
+
+```bash
+# 1. Pull the devcontainer image
+ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
+
+# 2. Extract the setup scripts
+podman run --rm -v $HOME:$HOME -w $HOME \
+  ghcr.io/smartdatafoundry/devcontainer:latest \
+  cp -r /workspace/scripts $HOME/devcontainer-scripts
+
+# 3. Run the one-time setup
+cd $HOME/devcontainer-scripts
+./setup.sh
+
+# 4. Start your devcontainer
+devcontainerctl start
+```
+
+See the "Using the Setup Scripts" section below for details.
+
+### Manual Setup
+
+For users who prefer manual control or are setting this up for the first time:
 
 1. Pull the devcontainer image
 2. Extract and install the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
@@ -16,6 +41,68 @@ The quick start is for users familiar with the TRE and using Dev Containers. If 
    2. Option B: Open Command Palette (`Ctrl+Shift+P`) and run "Dev Containers: Reopen in Container"
 7. Wait for container to start
 8. Do your work
+
+See the sections below for detailed instructions.
+
+## Using the Setup Scripts (Recommended)
+
+The devcontainer includes scripts that automate deployment and management in the TRE environment.
+
+### One-Time Setup
+
+After extracting the scripts (see Quick Start above), run the setup script:
+
+```bash
+cd $HOME/devcontainer-scripts
+./setup.sh
+```
+
+This script will:
+- Create `~/bin` directory if it doesn't exist
+- Create a symlink to `devcontainerctl` in `~/bin`
+- Add `~/bin` to your PATH (in `~/.bashrc`)
+- Configure a daily cron job (8:00 AM) to keep your image updated
+
+After running the setup, either restart your terminal or run:
+```bash
+source ~/.bashrc
+```
+
+### Daily Usage
+
+Once setup is complete, you can use the `devcontainerctl` command:
+
+```bash
+# Start your devcontainer (pulls latest matching image if needed)
+devcontainerctl start
+
+# Check status
+devcontainerctl status
+
+# Stop the container
+devcontainerctl stop
+
+# Restart the container
+devcontainerctl restart
+
+# Update to latest image and restart
+devcontainerctl update
+
+# Remove the container completely
+devcontainerctl remove
+```
+
+### Automatic Features
+
+The setup provides several automatic features:
+
+1. **Daily Updates**: A cron job runs at 8:00 AM daily to sync your container image with the latest version matching your VS Code installation
+
+2. **VS Code Tag Alignment**: The `devcontainerctl start` command automatically detects your installed VS Code version and pulls the matching container image tag (e.g., `vscode-abc1234`)
+
+3. **Automatic Mounting**: Your home directory and `/safedata` are automatically mounted when the container starts
+
+4. **Proxy Configuration**: HTTP proxy settings are inherited from your environment automatically
 
 ## Prerequisites
 
@@ -147,7 +234,7 @@ This approach leverages container technology directly while maintaining the abil
 The container ships with VS Code Server pre-installed. To ensure reproducibility or to match an existing TRE host version, specify the commit hash:
 
 1. Check your TRE VS Code version via _Help > About_
-2. The VS Code commit  value is declared in the `Dockerfile`  and can be overriden via workflow inputs.
+2. The VS Code commit value is declared in the [`Dockerfile`](.devcontainer/Dockerfile) and can be overridden via workflow inputs.
 
 ## Troubleshooting
 
@@ -173,6 +260,20 @@ If you experience network-related delays:
 
 - Ensure your proxy settings are correctly configured in the `runArgs` (HTTP_PROXY and HTTPS_PROXY are essential)
 - File system responsiveness may vary depending on TRE network conditions
+
+### Script Issues
+
+If `devcontainerctl` command is not found:
+
+- Ensure you've run the setup script: `./setup.sh`
+- Check that `~/bin` is in your PATH: `echo $PATH`
+- Try restarting your terminal or running: `source ~/.bashrc`
+
+If cron job is not running:
+
+- Verify it's configured: `crontab -l`
+- Check cron logs for errors
+- Manually test the sync command: `devcontainerctl sync`
 
 ## Support
 

@@ -1,0 +1,134 @@
+#!/bin/bash
+
+# Colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+VSCODE_TAG="${2:-vscode-$(code --version | sed -n '2p' | cut -c1-7)}"
+CONTAINER_NAME="devcontainer"
+
+show_usage() {
+    echo "Combined script to start or stop the devcontainer"
+    echo "Usage: devcontainerctl [start | stop | restart | remove | shell | status | sync] VSCODE_TAG"
+}
+
+get_latest_devcontainer() {
+    local rc="${1:-false}"
+    
+    # print a message after 30 seconds if the pull is still ongoing
+    (
+        sleep 30
+        echo -e "\n${YELLOW}Updates can take some time, please be patient...${NC}\n"
+    ) &
+    background_pid=$!
+    trap "kill $background_pid 2>/dev/null" RETURN
+
+    # Always attempt to install the aligned devcontainer
+    echo "Checking for devcontainer updates..."
+    if [ "$rc" = "true" ]; then
+        ces-pull sdf-build-git $GITHUB_TOKEN ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG \
+            | sed "s/$GITHUB_TOKEN/********/g"
+        podman tag ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG \
+            ghcr.io/smartdatafoundry/devcontainer:latest
+    else
+        ces-pull a a ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG
+        podman tag ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG \
+            ghcr.io/smartdatafoundry/devcontainer:latest
+    fi
+}
+
+start() {
+    echo "Starting devcontainer..."
+    
+    get_latest_devcontainer
+    
+    # Stop and remove any existing containers with these names
+    podman stop $CONTAINER_NAME 2>/dev/null
+    podman rm $CONTAINER_NAME 2>/dev/null
+    
+    # Start devcontainer
+    podman run -d \
+        --name devcontainer \
+        --restart unless-stopped \
+        -e http_proxy \
+        -v /safedata:/safedata \
+        -v $HOME:$HOME \
+        -w $HOME \
+        ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG sleep infinity
+    
+    echo "devcontainer service started. Check status with '$0 status'"
+}
+
+stop() {
+    echo "Stopping devcontainer service..."
+    podman stop $CONTAINER_NAME 2>/dev/null
+    echo "devcontainer stopped."
+}
+
+remove() {
+    echo "Stopping and removing devcontainer service..."
+    podman stop $CONTAINER_NAME 2>/dev/null
+    podman rm $CONTAINER_NAME 2>/dev/null
+    echo "devcontainer stopped and removed."
+}
+
+shell() {
+    echo "Opening shell in devcontainer..."
+    podman exec -it $CONTAINER_NAME /bin/bash
+}
+
+show_status() {
+    echo "devcontainer Service Status:"
+    echo "==========================="
+    status=$(podman ps -a --filter "name=$CONTAINER_NAME" --format "{{.Status}}" 2>/dev/null)
+    if [ -n "$status" ]; then
+        echo "$CONTAINER_NAME: $status"
+    else
+        echo "$CONTAINER_NAME: Not found"
+    fi
+}
+
+update() {
+    echo "Updating devcontainer image..."
+    remove
+    start # Restarts the container with the updated image automatically
+    echo "devcontainer replaced with updated image."
+}
+
+# Main script logic
+case "${1:-}" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    status)
+        show_status
+        ;;
+    remove)
+        remove
+        ;;
+    shell)
+        shell
+        ;;
+    sync)
+        get_latest_devcontainer
+        ;;
+    sync-rc)
+        get_latest_devcontainer true
+        ;;
+    update)
+        update
+        ;;
+    *)
+        show_usage
+        exit 1
+        ;;
+esac
