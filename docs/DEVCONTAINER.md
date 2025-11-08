@@ -166,9 +166,13 @@ This keeps maintenance simple: update the default by editing a single line in [`
 ## 📁 Repository Structure
 
 ```
+├── .codex/                        # Codex AI configuration
 ├── .devcontainer/
 │   ├── devcontainer.json          # Dev container configuration
 │   ├── Dockerfile                 # Custom Docker build
+│   ├── codex-config.toml          # Codex configuration
+│   ├── continue-config.yaml       # Continue IDE configuration
+│   ├── continue.env               # Continue environment variables
 │   └── vscode-init/               # VS Code server and extensions setup
 │       ├── 00-install-vscode-server.sh
 │       ├── 01-install-extensions.sh
@@ -176,16 +180,19 @@ This keeps maintenance simple: update the default by editing a single line in [`
 │       ├── extensions-to-download.txt
 │       └── extensions-to-install.txt
 ├── .github/workflows/
-│   ├── build-devcontainer.yml     # Build and publish workflow
-│   └── build-publish-container.yml
+│   ├── build-devcontainer.yml     # Dev container build workflow
+│   ├── build-publish-container.yml # Container publishing workflow
+│   └── update-vscode.yml          # VS Code version update workflow
 ├── scripts/                       # User deployment scripts
-│   ├── devcontainerctl           # Container management script
-│   └── setup.sh                  # One-time setup script
+│   ├── devcontainerctl            # Container management script
+│   └── setup.sh                   # One-time setup script
 ├── assets/                        # Documentation assets
 ├── docs/                          # Additional documentation
-├── DEVCONTAINER.md                # Detailed documentation
-├── README.md                      # Overview and quick start
-└── SDF_TRE_SETUP.md               # SDF TRE setup guide
+│   ├── BUILD_PUBLISH_CONTAINER.md # Build/publish documentation
+│   ├── DEVCONTAINER.md            # Detailed documentation
+│   ├── SDF_TRE_SETUP.md           # SDF TRE setup guide
+│   └── VSCODE_AUTO_UPDATE.md      # VS Code auto-update documentation
+└── README.md                      # Overview and quick start
 ```
 
 ## 🔧 Customization
