@@ -44,7 +44,7 @@ jobs:
           echo "Latest VS Code commit: $LATEST_COMMIT"
           echo "commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
           echo "short=${LATEST_COMMIT:0:7}" >> $GITHUB_OUTPUT
-          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "release=$LATEST_RELEASE" >> $GITHUB_OUTPUT
 
       - name: Check if update needed
         id: check
@@ -79,12 +79,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: |
-            chore: update VS Code to ${{ steps.latest.outputs.tag }}
+            chore: update VS Code to ${{ steps.latest.outputs.release }}
             
             Update VSCODE_COMMIT from ${{ steps.current.outputs.short }} to ${{ steps.latest.outputs.short }}
           branch: automated/update-vscode-${{ steps.latest.outputs.short }}
           delete-branch: true
-          title: 'chore: update VS Code to ${{ steps.latest.outputs.tag }}'
+          title: 'chore: update VS Code to ${{ steps.latest.outputs.release }}'
           body: |
             ## 🔄 Automated VS Code Update
             
@@ -92,7 +92,7 @@ jobs:
             
             **Previous version:** `${{ steps.current.outputs.commit }}`
             **New version:** `${{ steps.latest.outputs.commit }}`
-            **Release tag:** `${{ steps.latest.outputs.tag }}`
+            **Release:** `${{ steps.latest.outputs.release }}`
             
             ### Changes
             - Updated `VSCODE_COMMIT` in `.devcontainer/Dockerfile`
@@ -127,7 +127,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Previous commit:** \`${{ steps.current.outputs.commit }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**New commit:** \`${{ steps.latest.outputs.commit }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Release tag:** \`${{ steps.latest.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** \`${{ steps.latest.outputs.release }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Pull Request:** #${{ steps.create-pr.outputs.pull-request-number }}" >> $GITHUB_STEP_SUMMARY
           echo "**Auto-merge:** Enabled (will merge after checks pass)" >> $GITHUB_STEP_SUMMARY
