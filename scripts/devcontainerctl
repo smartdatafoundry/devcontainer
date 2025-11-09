@@ -53,7 +53,7 @@ start() {
         --name devcontainer \
         --restart unless-stopped \
         -e http_proxy \
-        -v /safedata:/safedata \
+        -v /safe_data:/safe_data \
         -v $HOME:$HOME \
         -w $HOME \
         ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG sleep infinity

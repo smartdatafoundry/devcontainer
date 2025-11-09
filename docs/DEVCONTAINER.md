@@ -88,7 +88,7 @@ A comprehensive container lifecycle management script that provides:
 - Automatic image updates with VS Code tag alignment
 - Container lifecycle management (start, stop, restart, remove)
 - Status monitoring
-- Automatic home directory and `/safedata` mounting
+- Automatic home directory and `/safe_data` mounting
 - Proxy configuration inheritance
 - Background update notifications
 

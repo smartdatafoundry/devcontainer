@@ -100,7 +100,7 @@ The setup provides several automatic features:
 
 2. **VS Code Tag Alignment**: The `devcontainerctl start` command automatically detects your installed VS Code version and pulls the matching container image tag (e.g., `vscode-abc1234`)
 
-3. **Automatic Mounting**: Your home directory and `/safedata` are automatically mounted when the container starts
+3. **Automatic Mounting**: Your home directory and `/safe_data` are automatically mounted when the container starts
 
 4. **Proxy Configuration**: HTTP proxy settings are inherited from your environment automatically
 
