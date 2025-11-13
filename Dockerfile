@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/devcontainers/base:noble
 
 # VS Code commit ID for devcontainer compatibility. Can be overridden at build time via build args.
 # Default chosen for current stable VS Code Server version used in this repository.
-ARG VSCODE_COMMIT=7d842fb85a0275a4a8e4d7e040d2625abbf7f084
+ARG VSCODE_COMMIT=ac4cbdf48759c7d8c3eb91ffe6bb04316e263c57
 
 ENV VSCODE_COMMIT=${VSCODE_COMMIT}
 
