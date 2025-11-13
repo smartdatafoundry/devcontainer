@@ -8,6 +8,7 @@ NC='\033[0m' # No Color
 
 VSCODE_TAG="${2:-vscode-$(code --version | sed -n '2p' | cut -c1-7)}"
 CONTAINER_NAME="devcontainer"
+NETWORK_NAME="sdf-network"
 
 show_usage() {
     echo "Combined script to start or stop the devcontainer"
@@ -43,6 +44,9 @@ start() {
     echo "Starting devcontainer..."
     
     get_latest_devcontainer
+
+    # Create a network for the containers to communicate
+    podman network create $NETWORK_NAME 2>/dev/null || echo "Network $NETWORK_NAME already exists"
     
     # Stop and remove any existing containers with these names
     podman stop $CONTAINER_NAME 2>/dev/null
@@ -52,7 +56,7 @@ start() {
     podman run -d \
         --name devcontainer \
         --restart unless-stopped \
-        -e http_proxy \
+        --network $NETWORK_NAME \
         -v /safe_data:/safe_data \
         -v $HOME:$HOME \
         -w $HOME \
@@ -88,6 +92,10 @@ show_status() {
     else
         echo "$CONTAINER_NAME: Not found"
     fi
+    echo ""
+    echo "Network: $NETWORK_NAME"
+    # podman network inspect $NETWORK_NAME 2>/dev/null || echo "Network $NETWORK_NAME: Not found"
+    podman network ls | grep $NETWORK_NAME || echo "Network $NETWORK_NAME: Not found"
 }
 
 update() {
