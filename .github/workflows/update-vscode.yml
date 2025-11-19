@@ -74,7 +74,7 @@ jobs:
 
       - name: Generate App Token
         id: generate-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.SDF_ACTIONS_ACTOR_APP_ID }}
           private-key: ${{ secrets.SDF_ACTIONS_ACTOR_PRIVATE_KEY }}

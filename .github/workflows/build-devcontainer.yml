@@ -94,6 +94,20 @@ jobs:
           echo "tags=$TAGS" >> $GITHUB_OUTPUT
           echo "Extracted tags: $TAGS"
 
+      # Free up disk space before security scan to prevent "no space left on device" errors
+      - name: Free Disk Space
+        run: |
+          echo "=== Disk space before cleanup ==="
+          df -h
+          echo "=== Removing unnecessary files ==="
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo apt-get clean
+          echo "=== Disk space after cleanup ==="
+          df -h
+
       - name: Build and publish dev container
         uses: devcontainers/ci@v0.3
         env:
@@ -125,20 +139,6 @@ jobs:
             fi
             
             echo "=== Dev container validation completed! ==="
-      
-      # Free up disk space before security scan to prevent "no space left on device" errors
-      - name: Free Disk Space
-        run: |
-          echo "=== Disk space before cleanup ==="
-          df -h
-          echo "=== Removing unnecessary files ==="
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo apt-get clean
-          echo "=== Disk space after cleanup ==="
-          df -h
 
       # Using the custom Trivy Security Scan action from this repository
       - name: Security Scan
