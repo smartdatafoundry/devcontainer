@@ -2,11 +2,11 @@
 # These extensions will be enabled for all users of the devcontainer.
 # One extension ID per line.
 charliermarsh.ruff
-#Continue.continue
+Continue.continue
 DavidAnson.vscode-markdownlint
 eamodio.gitlens
 # The marimo extension has been removed from the marketplace whilst it is being rewritten.
-# marimo-team.vscode-marimo
+marimo-team.vscode-marimo
 mechatroner.rainbow-csv
 ms-ossdata.vscode-pgsql --pre-release
 ms-python.black-formatter
