@@ -1,0 +1,13 @@
+{
+  "security": {
+    "auth": {
+      "selectedType": "openai",
+      "apiKey": "sk-<YOUR-API-KEY-HERE>",
+      "baseUrl": "https://host.containers.internal:8080/api"
+    }
+  },
+  "model": {
+    "name": "qwen3-coder:30b"
+  },
+  "$version": 2
+}

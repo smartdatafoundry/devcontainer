@@ -15,7 +15,7 @@ ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
 # 2. Extract the setup scripts
 podman run --rm -v $HOME:$HOME -w $HOME \
   ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp -r /workspace/scripts $HOME/devcontainer-scripts
+  cp -r /opt/scripts $HOME/devcontainer-scripts
 
 # 3. Run the one-time setup
 cd $HOME/devcontainer-scripts
@@ -61,7 +61,7 @@ This script will:
 - Create `~/bin` directory if it doesn't exist
 - Create a symlink to `devcontainerctl` in `~/bin`
 - Add `~/bin` to your PATH (in `~/.bashrc`)
-- Configure a daily cron job (8:00 AM) to keep your image updated
+- Configure a daily cron job (8:00 AM) to sync your image with latest version
 
 After running the setup, either restart your terminal or run:
 ```bash
@@ -96,9 +96,9 @@ devcontainerctl remove
 
 The setup provides several automatic features:
 
-1. **Daily Updates**: A cron job runs at 8:00 AM daily to sync your container image with the latest version matching your VS Code installation
+1. **Daily Updates**: A cron job runs at 8:00 AM daily to sync your container image with the latest version matching your VS Code installation (using `devcontainerctl sync`)
 
-2. **VS Code Tag Alignment**: The `devcontainerctl start` command automatically detects your installed VS Code version and pulls the matching container image tag (e.g., `vscode-abc1234`)
+2. **VS Code Tag Alignment**: The `devcontainerctl update` command automatically detects your installed VS Code version and starts the matching container image tag (e.g., `vscode-7d842fb`)
 
 3. **Automatic Mounting**: Your home directory and `/safe_data` are automatically mounted when the container starts
 
@@ -135,11 +135,11 @@ ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
 The Dev Containers extension VSIX is baked into the image for offline / restricted environments. Extract it:
 
 ```bash
-podman run --rm -it \
+podman run --rm \
   -v $PWD:$PWD \
   -w $PWD \
   ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp /opt/ms-vscode-remote.remote-containers.vsix .
+  cp /opt/vscode-init/ms-vscode-remote.remote-containers.vsix .
 ```
 
 ### 3. Install the Extension
@@ -193,8 +193,8 @@ Create a `.devcontainer/devcontainer.json` file in your project root:
 
   "runArgs": [
     "--userns=host",
-    "-e HTTP_PROXY",
-    "-e HTTPS_PROXY"
+    "-e http_proxy",
+    "-e https_proxy"
   ],
 
   "remoteUser": "root"
@@ -211,7 +211,7 @@ After creating this file you can reopen the project in VS Code using the Dev Con
   
 - **`runArgs`**:
   - `--userns=host`: Uses the host user namespace for TRE compatibility
-  - `-e HTTP_PROXY` and `-e HTTPS_PROXY`: **Essential** for `pip` and network calls to work within the TRE. These inherit proxy credentials from your TRE environment
+  - `-e http_proxy` and `-e https_proxy`: **Essential** for `pip` and network calls to work within the TRE. These inherit proxy credentials from your TRE environment
   
 - **`remoteUser`**: Set to `root` for TRE compatibility
 
@@ -258,7 +258,7 @@ If you can't see "Dev Containers" in the VS Code command palette:
 
 If you experience network-related delays:
 
-- Ensure your proxy settings are correctly configured in the `runArgs` (HTTP_PROXY and HTTPS_PROXY are essential)
+- Ensure your proxy settings are correctly configured in the `runArgs` (http_proxy and https_proxy are essential)
 - File system responsiveness may vary depending on TRE network conditions
 
 ### Script Issues
@@ -271,7 +271,7 @@ If `devcontainerctl` command is not found:
 
 If cron job is not running:
 
-- Verify it's configured: `crontab -l`
+- Verify it's configured: `crontab -l` (should show: `0 8 * * * $HOME/bin/devcontainerctl sync`)
 - Check cron logs for errors
 - Manually test the sync command: `devcontainerctl sync`
 

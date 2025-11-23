@@ -66,7 +66,7 @@ ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
 # 2. Extract the setup scripts
 podman run --rm -v $HOME:$HOME -w $HOME \
   ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp -r /workspace/scripts $HOME/devcontainer-scripts
+  cp -r /opt/scripts $HOME/devcontainer-scripts
 
 # 3. Run the setup script (one-time setup)
 cd $HOME/devcontainer-scripts
@@ -79,7 +79,7 @@ devcontainerctl start
 The setup script will:
 - Create a symlink to `devcontainerctl` in `~/bin`
 - Add `~/bin` to your PATH
-- Configure a daily cron job to keep the image updated
+- Configure a daily cron job (8:00 AM) to update your container with the latest version
 
 Available `devcontainerctl` commands:
 - `devcontainerctl start` - Pull latest image and start container
@@ -147,7 +147,7 @@ This dev container includes comprehensive R language support through the [Rocker
 
 ## ⚙️ VS Code Server
 
-Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT`. For environment-specific considerations (e.g. TRE) see [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md).
+Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT` (default: `7d842fb85a0275a4a8e4d7e040d2625abbf7f084`). For environment-specific considerations (e.g. TRE) see [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md).
 
 ## Adding New Extensions
 To add new VS Code extensions to the container, follow these steps:

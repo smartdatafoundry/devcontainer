@@ -13,6 +13,7 @@ ms-python.black-formatter
 ms-toolsai.datawrangler
 ms-toolsai.jupyter
 #openai.chatgpt
+qwenlm.qwen-code-vscode-ide-companion
 REditorSupport.r
 REditorSupport.r-syntax
 yzhang.markdown-all-in-one
