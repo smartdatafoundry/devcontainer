@@ -103,8 +103,8 @@ A comprehensive container lifecycle management script that provides:
 
 **Usage:**
 ```bash
-devcontainerctl start               # Start with auto-detected VS Code version
-devcontainerctl start vscode-abc123 # Start with specific tag
+devcontainerctl start               # Start with auto-detected VS Code version (image must already be pulled; run 'update' or 'sync' first if needed)
+devcontainerctl start vscode-abc123 # Start with specific tag (image must already be pulled)
 devcontainerctl status              # Check status
 devcontainerctl sync                # Update image (used by daily cron)
 devcontainerctl update              # Update and restart

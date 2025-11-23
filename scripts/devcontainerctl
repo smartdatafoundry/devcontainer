@@ -53,6 +53,9 @@ start() {
         -v /safe_data:/safe_data \
         -v $HOME:$HOME \
         -w $HOME \
+        -e http_proxy \
+        -e https_proxy \
+        -e no_proxy \
         ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG sleep infinity
     
     echo "devcontainer service started. Check status with '$0 status'"

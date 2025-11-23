@@ -82,7 +82,7 @@ The setup script will:
 - Configure a daily cron job (8:00 AM) to update your container with the latest version
 
 Available `devcontainerctl` commands:
-- `devcontainerctl start` - Pull latest image and start container
+- `devcontainerctl start` - Start container with existing image
 - `devcontainerctl stop` - Stop the container
 - `devcontainerctl restart` - Restart the container
 - `devcontainerctl status` - Check container status
