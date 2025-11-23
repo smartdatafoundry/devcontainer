@@ -1,0 +1,14 @@
+{
+  "security": {
+    "auth": {
+      // WARNING: Replace the placeholder API key below with your actual API key before use.
+      "selectedType": "openai",
+      "apiKey": "sk-<YOUR-API-KEY-HERE>",
+      "baseUrl": "http://host.containers.internal:8080/api"
+    }
+  },
+  "model": {
+    "name": "qwen3-coder:30b"
+  },
+  "$version": 2
+}

@@ -9,4 +9,5 @@ vscodevim.vim
 Continue.continue
 ms-toolsai.jupyter-keymap
 openai.chatgpt
+qwenlm.qwen-code-vscode-ide-companion
 REditorSupport.r-syntax

@@ -11,7 +11,7 @@ CONTAINER_NAME="devcontainer"
 
 show_usage() {
     echo "Combined script to start or stop the devcontainer"
-    echo "Usage: devcontainerctl [start | stop | restart | remove | shell | status | sync] VSCODE_TAG"
+    echo "Usage: devcontainerctl [start | stop | restart | remove | update | shell | status | sync | sync-rc] VSCODE_TAG"
 }
 
 get_latest_devcontainer() {
@@ -42,8 +42,6 @@ get_latest_devcontainer() {
 start() {
     echo "Starting devcontainer..."
     
-    get_latest_devcontainer
-    
     # Stop and remove any existing containers with these names
     podman stop $CONTAINER_NAME 2>/dev/null
     podman rm $CONTAINER_NAME 2>/dev/null
@@ -52,10 +50,12 @@ start() {
     podman run -d \
         --name devcontainer \
         --restart unless-stopped \
-        -e http_proxy \
         -v /safe_data:/safe_data \
         -v $HOME:$HOME \
         -w $HOME \
+        -e http_proxy \
+        -e https_proxy \
+        -e no_proxy \
         ghcr.io/smartdatafoundry/devcontainer:$VSCODE_TAG sleep infinity
     
     echo "devcontainer service started. Check status with '$0 status'"
@@ -65,6 +65,12 @@ stop() {
     echo "Stopping devcontainer service..."
     podman stop $CONTAINER_NAME 2>/dev/null
     echo "devcontainer stopped."
+}
+
+restart() {
+    echo "Restarting devcontainer service..."
+    podman restart $CONTAINER_NAME 2>/dev/null
+    echo "devcontainer restarted."
 }
 
 remove() {
@@ -92,6 +98,7 @@ show_status() {
 
 update() {
     echo "Updating devcontainer image..."
+    sync
     remove
     start # Restarts the container with the updated image automatically
     echo "devcontainer replaced with updated image."
@@ -106,8 +113,7 @@ case "${1:-}" in
         stop
         ;;
     restart)
-        stop
-        start
+        restart
         ;;
     status)
         show_status

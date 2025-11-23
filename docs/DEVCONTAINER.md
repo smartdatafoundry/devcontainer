@@ -75,11 +75,11 @@ This dev container includes:
 * **Marimo**: Alternative interactive notebook/presentation tool
 * **VS Code Server**: Pre-installed (pin via tag families)
 * **VS Code Extensions**: Curated list (see [`.devcontainer/vscode-init/extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt))
-* **User Setup Scripts**: Automated deployment and management tools
+* **User Setup Scripts**: Automated deployment and management tools (at `/opt/scripts/` in container)
 
 ### User Setup Scripts
 
-The container includes scripts in [`/workspace/scripts/`](scripts/) to simplify deployment and management:
+The container includes scripts in [`/opt/scripts/`](../scripts/) to simplify deployment and management:
 
 #### [`scripts/devcontainerctl`](scripts/devcontainerctl)
 A comprehensive container lifecycle management script that provides:
@@ -103,10 +103,13 @@ A comprehensive container lifecycle management script that provides:
 
 **Usage:**
 ```bash
-devcontainerctl start              # Start with auto-detected VS Code version
-devcontainerctl start vscode-abc123 # Start with specific tag
-devcontainerctl status             # Check status
-devcontainerctl sync               # Update image (used by daily cron)
+devcontainerctl start               # Start with auto-detected VS Code version (image must already be pulled; run 'update' or 'sync' first if needed)
+devcontainerctl start vscode-abc123 # Start with specific tag (image must already be pulled)
+devcontainerctl status              # Check status
+devcontainerctl sync                # Update image (used by daily cron)
+devcontainerctl update              # Update and restart
+devcontainerctl stop                # Stop container
+devcontainerctl remove              # Remove container
 ```
 
 #### [`scripts/setup.sh`](scripts/setup.sh)
@@ -116,14 +119,14 @@ One-time setup script that configures your environment:
 - Creates `~/bin` directory if needed
 - Creates symlink to `devcontainerctl` in `~/bin`
 - Adds `~/bin` to PATH in `~/.bashrc`
-- Configures daily cron job (8:00 AM) to sync images
+- Configures daily cron job (8:00 AM) to sync images using `devcontainerctl sync`
 
 **Usage:**
 ```bash
 # Extract scripts from container first
 podman run --rm -v $HOME:$HOME -w $HOME \
   ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp -r /workspace/scripts $HOME/devcontainer-scripts
+  cp -r /opt/scripts $HOME/devcontainer-scripts
 
 # Run setup
 cd $HOME/devcontainer-scripts

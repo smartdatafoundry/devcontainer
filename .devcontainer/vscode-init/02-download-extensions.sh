@@ -10,8 +10,10 @@ set -e
 # of the extension and its functionality gets inherited by devcontainers.
 
 EXTENSIONS_FILE="extensions-to-download.txt"
-DOWNLOAD_DIR="/opt"
+DOWNLOAD_DIR="/opt/vscode-extensions"
 SUCCESSFUL_DOWNLOADS=()
+
+mkdir -p "${DOWNLOAD_DIR}"
 
 if [ ! -f "${EXTENSIONS_FILE}" ]; then
     echo "Error: Extensions file not found at ${EXTENSIONS_FILE}"
@@ -41,7 +43,10 @@ download_extension() {
     local extension_name="${extension_id#*.}"
     
     local extension_filepath="${DOWNLOAD_DIR}/${extension_id}.vsix"
-    local download_url="https://${publisher}.gallery.vsassets.io/_apis/public/gallery/publisher/${publisher}/extension/${extension_name}/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage"
+
+    # We first need to lookup releases to find the latest version and architecture to download URL
+    local download_url="$(curl -sSL https://marketplace.visualstudio.com/_apis/public/gallery/vscode/${publisher}/${extension_name}/latest \
+      | jq -r '.versions[] | select(.targetPlatform == "linux-x64" or .targetPlatform == null) | select(.flags | contains("prerelease") | not) | .files[] | select(.assetType == "Microsoft.VisualStudio.Services.VSIXPackage") | .source' | head -n1)"
     
     echo "Downloading ${extension_id}..."
     
