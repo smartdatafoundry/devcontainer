@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Pre-loaded Ollama models
+  ollama-models:
+    image: ghcr.io/smartdatafoundry/ollama-models:latest
+    volumes:
+      - ollama-data:/root/.ollama
+
+  # Ollama service
+  ollama:
+    image: ghcr.io/smartdatafoundry/ollama:latest
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_ORIGINS=*
+    restart: unless-stopped
+    depends_on:
+      - ollama-models
+
+  # Development container
+  devcontainer:
+    image: ghcr.io/smartdatafoundry/devcontainer:latest
+    volumes:
+      - ../..:/workspace:cached
+    working_dir: /workspace
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    command: sleep infinity
+
+volumes:
+  ollama-data:

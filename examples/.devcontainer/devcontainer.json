@@ -1,0 +1,35 @@
+{
+  "name": "Development with Ollama Models",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspace",
+  
+  "forwardPorts": [11434],
+  "portsAttributes": {
+    "11434": {
+      "label": "Ollama API",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "continue.continue"
+      ],
+      "settings": {
+        "continue.enableTabAutocomplete": true
+      }
+    }
+  },
+
+  "postStartCommand": {
+    "verify-ollama": "curl -s http://ollama:11434/api/tags | jq -r '.models[].name' | sort"
+  },
+
+  "features": {},
+  
+  "remoteEnv": {
+    "OLLAMA_HOST": "http://ollama:11434"
+  }
+}

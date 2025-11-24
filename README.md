@@ -106,6 +106,7 @@ For detailed manual setup instructions, see the **[SDF TRE Setup Guide](docs/SDF
 |-------|-----------|
 | SDF TRE usage | [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md) |
 | Full container internals | [`docs/DEVCONTAINER.md`](docs/DEVCONTAINER.md) |
+| Ollama models volume | [`docs/OLLAMA_MODELS_VOLUME.md`](docs/OLLAMA_MODELS_VOLUME.md) |
 | Setup scripts | [`scripts/`](scripts/) directory |
 | Reusable publish workflow | [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md) |
 | Dev Container Specification | https://containers.dev |

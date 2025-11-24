@@ -1,0 +1,92 @@
+version: '3.8'
+
+# Example Docker Compose configuration for using Ollama with pre-loaded models
+# in a development container setup.
+#
+# Usage:
+#   docker-compose up -d
+#   docker-compose exec devcontainer bash
+
+services:
+  # Data volume container with pre-pulled Ollama models
+  ollama-models:
+    image: ghcr.io/smartdatafoundry/ollama-models:latest
+    volumes:
+      - ollama-data:/root/.ollama
+    # This container just provides the data volume
+    command: ["sh", "-c", "echo 'Models loaded' && exit 0"]
+
+  # Ollama service with models from the data volume
+  ollama:
+    image: ghcr.io/smartdatafoundry/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      # Optional: Configure Ollama environment variables
+      - OLLAMA_ORIGINS=*
+      # - OLLAMA_DEBUG=1
+    restart: unless-stopped
+    depends_on:
+      ollama-models:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Development container with access to Ollama
+  devcontainer:
+    image: ghcr.io/smartdatafoundry/devcontainer:latest
+    container_name: devcontainer
+    volumes:
+      # Mount your workspace
+      - ${WORKSPACE_DIR:-.}:/workspace:cached
+      # Optional: Mount safe_data if in SDF TRE
+      # - /safe_data:/safe_data:ro
+    working_dir: /workspace
+    environment:
+      # Configure Ollama client to use the ollama service
+      - OLLAMA_HOST=http://ollama:11434
+      # Proxy settings (useful in restricted environments)
+      - http_proxy=${http_proxy:-}
+      - https_proxy=${https_proxy:-}
+      - no_proxy=${no_proxy:-}
+    depends_on:
+      ollama:
+        condition: service_healthy
+    # Keep container running
+    command: ["sleep", "infinity"]
+    restart: unless-stopped
+
+volumes:
+  # Named volume for Ollama models
+  # This persists the models between container restarts
+  ollama-data:
+
+# Example usage after starting:
+#
+# 1. Start all services:
+#    docker-compose up -d
+#
+# 2. Check Ollama is running and models are available:
+#    docker-compose exec ollama ollama list
+#
+# 3. Test a model:
+#    docker-compose exec ollama ollama run llama3.2 "Hello, world!"
+#
+# 4. Access the development container:
+#    docker-compose exec devcontainer bash
+#
+# 5. Use Ollama from devcontainer:
+#    docker-compose exec devcontainer curl http://ollama:11434/api/tags
+#
+# 6. Stop all services:
+#    docker-compose down
+#
+# 7. Remove volumes (deletes models):
+#    docker-compose down -v

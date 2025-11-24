@@ -1,0 +1,273 @@
+name: Build and Publish Ollama Models Volume
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-ollama-models.yml'
+      - 'scripts/build-ollama-volume.sh'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-ollama-models.yml'
+      - 'scripts/build-ollama-volume.sh'
+  workflow_dispatch:
+    inputs:
+      models:
+        description: 'Comma-separated list of Ollama models to include'
+        required: false
+        default: 'qwen3-coder:30b,nate/instinct,nomic-embed-text:v1.5'
+        type: string
+      tag:
+        description: 'Tag for the container image'
+        required: false
+        default: 'latest'
+        type: string
+      additional_tags:
+        description: 'Additional tags (comma-separated)'
+        required: false
+        default: ''
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/ollama-models
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
+      id-token: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine models and tags
+        id: config
+        run: |
+          # Determine which models to include
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODELS="${{ inputs.models }}"
+            TAG="${{ inputs.tag }}"
+            ADDITIONAL_TAGS="${{ inputs.additional_tags }}"
+          else
+            # Default models for automatic builds
+            MODELS="qwen3-coder:30b,nate/instinct,nomic-embed-text:v1.5"
+            TAG="latest"
+            ADDITIONAL_TAGS=""
+          fi
+          
+          echo "models=${MODELS}" >> $GITHUB_OUTPUT
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "additional_tags=${ADDITIONAL_TAGS}" >> $GITHUB_OUTPUT
+          
+          # Create model hash for unique identification
+          MODEL_HASH=$(echo -n "${MODELS}" | sha256sum | cut -c1-8)
+          echo "model_hash=${MODEL_HASH}" >> $GITHUB_OUTPUT
+          
+          echo "Building with models: ${MODELS}"
+          echo "Primary tag: ${TAG}"
+          echo "Model hash: ${MODEL_HASH}"
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ steps.config.outputs.tag }}
+            type=raw,value=models-${{ steps.config.outputs.model_hash }}
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-,enable={{is_default_branch}}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' && steps.config.outputs.tag == 'latest' }}
+          labels: |
+            org.opencontainers.image.title=Ollama Models Data Volume
+            org.opencontainers.image.description=Pre-pulled Ollama models for use as a data volume
+            org.opencontainers.image.vendor=Smart Data Foundry
+            models=${{ steps.config.outputs.models }}
+
+      - name: Create Dockerfile
+        run: |
+          mkdir -p /tmp/ollama-build
+          cat > /tmp/ollama-build/Dockerfile << 'EOF'
+          FROM --platform=linux/amd64 ghcr.io/smartdatafoundry/ollama:latest AS builder
+
+          # Install models
+          ARG MODELS
+          RUN if [ -z "$MODELS" ]; then \
+                  echo "Error: MODELS build arg is required" && exit 1; \
+              fi && \
+              /bin/ollama serve & \
+              OLLAMA_PID=$! && \
+              sleep 5 && \
+              IFS=',' read -ra MODEL_ARRAY <<< "$MODELS" && \
+              for model in "${MODEL_ARRAY[@]}"; do \
+                  echo "Pulling model: $model" && \
+                  ollama pull "$model" || exit 1; \
+              done && \
+              kill $OLLAMA_PID && \
+              wait $OLLAMA_PID || true
+
+          # Create minimal data volume image
+          FROM scratch
+
+          # Copy models from builder
+          COPY --from=builder /root/.ollama /root/.ollama
+
+          # Add metadata
+          ARG MODELS
+          LABEL org.opencontainers.image.title="Ollama Models Data Volume"
+          LABEL org.opencontainers.image.description="Pre-pulled Ollama models for use as a data volume"
+          LABEL org.opencontainers.image.source="https://github.com/${{ github.repository }}"
+          LABEL org.opencontainers.image.vendor="Smart Data Foundry"
+          LABEL models="${MODELS}"
+
+          # Volume mount point
+          VOLUME ["/root/.ollama"]
+          EOF
+
+      - name: Build container image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: /tmp/ollama-build
+          file: /tmp/ollama-build/Dockerfile
+          build-args: |
+            MODELS=${{ steps.config.outputs.models }}
+          push: false
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Get first tag for scanning
+        id: first-tag
+        run: |
+          FIRST_TAG=$(echo '${{ steps.meta.outputs.tags }}' | head -n1)
+          echo "tag=$FIRST_TAG" >> $GITHUB_OUTPUT
+          echo "Using tag for scan: $FIRST_TAG"
+
+      - name: Security Scan (Trivy)
+        id: security-scan
+        uses: smartdatafoundry/trivy-security-scan@v1.0.0
+        with:
+          image-ref: ${{ steps.first-tag.outputs.tag }}
+          registry: ${{ env.REGISTRY }}
+          severity: 'CRITICAL,HIGH'
+          detailed-severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+          ignore-unfixed: 'true'
+          exit-code: '0'
+          artifact-name: 'ollama-models-security-scan'
+          artifact-retention-days: '30'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          post-pr-comment: 'true'
+
+      - name: Push container image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: /tmp/ollama-build
+          file: /tmp/ollama-build/Dockerfile
+          build-args: |
+            MODELS=${{ steps.config.outputs.models }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Create release summary
+        if: github.event_name != 'pull_request'
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🎉 Ollama Models Volume Published
+
+          **Registry:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`
+
+          ### 📦 Included Models
+          \`\`\`
+          ${{ steps.config.outputs.models }}
+          \`\`\`
+
+          ### 🏷️ Tags
+          \`\`\`
+          ${{ steps.meta.outputs.tags }}
+          \`\`\`
+
+          ### 📥 Usage
+
+          #### Pull the image
+          \`\`\`bash
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.config.outputs.tag }}
+          \`\`\`
+
+          #### Use as data volume
+          \`\`\`bash
+          # Create container from data volume
+          docker create --name ollama-models ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.config.outputs.tag }}
+
+          # Run Ollama with models
+          docker run -d \\
+            --name ollama \\
+            --volumes-from ollama-models \\
+            -p 11434:11434 \\
+            ghcr.io/smartdatafoundry/ollama:latest
+
+          # Verify models
+          docker exec ollama ollama list
+          \`\`\`
+
+          ### 🔍 Security Scan
+          Security scan results available in workflow artifacts.
+
+          ---
+          *Built on $(date -u +'%Y-%m-%d %H:%M:%S UTC')*
+          EOF
+
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const models = '${{ steps.config.outputs.models }}';
+            const tag = '${{ steps.config.outputs.tag }}';
+            const modelHash = '${{ steps.config.outputs.model_hash }}';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🔍 Ollama Models Volume Build Preview
+
+              **Models:** \`${models}\`  
+              **Tag:** \`${tag}\`  
+              **Model Hash:** \`${modelHash}\`
+
+              The Ollama models volume has been built successfully for this PR.
+              
+              Once merged to main, it will be available at:
+              \`\`\`
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${tag}
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:models-${modelHash}
+              \`\`\`
+
+              Security scan results are available in the workflow artifacts.`
+            });
