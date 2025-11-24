@@ -184,8 +184,8 @@ The repository includes a GitHub Actions workflow that automatically builds and 
 
 ### Triggers
 
-- **Push to main**: Builds with default models
-- **Pull requests**: Builds for preview (no push)
+- ~~**Push to main**: Builds with default models~~
+- ~~**Pull requests**: Builds for preview (no push)~~
 - **Manual dispatch**: Build with custom models and tags
 
 ### Manual Workflow Dispatch
