@@ -13,7 +13,7 @@
 	"features": {
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
-			"toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,poetry,marimo[recommended],nvitop",
+			"toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,poetry,marimo[recommended],nvitop,uv",
 			"version": "os-provided"
 		},
 		"ghcr.io/devcontainers/features/common-utils:2": {
