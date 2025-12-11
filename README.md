@@ -66,10 +66,10 @@ ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
 # 2. Extract the setup scripts
 podman run --rm -v $HOME:$HOME -w $HOME \
   ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp -r /opt/scripts $HOME/devcontainer-scripts
+  cp -r /opt/devcontainerctl $HOME/devcontainerctl
 
 # 3. Run the setup script (one-time setup)
-cd $HOME/devcontainer-scripts
+cd $HOME/devcontainerctl
 ./setup.sh
 
 # 4. Start your devcontainer
@@ -106,7 +106,7 @@ For detailed manual setup instructions, see the **[SDF TRE Setup Guide](docs/SDF
 |-------|-----------|
 | SDF TRE usage | [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md) |
 | Full container internals | [`docs/DEVCONTAINER.md`](docs/DEVCONTAINER.md) |
-| Setup scripts | [`scripts/`](scripts/) directory |
+| Setup scripts | [`devcontainerctl/`](devcontainerctl/) directory |
 | Reusable publish workflow | [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md) |
 | Dev Container Specification | https://containers.dev |
 
@@ -119,7 +119,7 @@ For detailed manual setup instructions, see the **[SDF TRE Setup Guide](docs/SDF
 - **Shell**: Zsh with Oh My Zsh (via common-utils feature)
 - **Quarto**: Document publishing platform (latest version)
 - **Marimo**: Markdown presentation tool, alternative to Jupyter Notebooks
-- **User Setup Scripts**: Automated deployment and management tools ([`scripts/`](scripts/))
+- **User Setup Scripts**: Automated deployment and management tools ([`devcontainerctl/`](devcontainerctl/))
 - **VS Code Extensions (curated)**:
   - Continue (AI assistant)
   - Black (Python formatting)
