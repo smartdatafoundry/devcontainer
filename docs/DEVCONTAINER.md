@@ -75,13 +75,13 @@ This dev container includes:
 * **Marimo**: Alternative interactive notebook/presentation tool
 * **VS Code Server**: Pre-installed (pin via tag families)
 * **VS Code Extensions**: Curated list (see [`.devcontainer/vscode-init/extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt))
-* **User Setup Scripts**: Automated deployment and management tools (at `/opt/scripts/` in container)
+* **User Setup Scripts**: Automated deployment and management tools (at `/opt/devcontainerctl/` in container)
 
 ### User Setup Scripts
 
-The container includes scripts in [`/opt/scripts/`](../scripts/) to simplify deployment and management:
+The container includes scripts in [`/opt/devcontainerctl/`](../devcontainerctl/) to simplify deployment and management:
 
-#### [`scripts/devcontainerctl`](scripts/devcontainerctl)
+#### [`devcontainerctl/devcontainerctl`](../devcontainerctl/devcontainerctl)
 A comprehensive container lifecycle management script that provides:
 
 **Features:**
@@ -112,7 +112,7 @@ devcontainerctl stop                # Stop container
 devcontainerctl remove              # Remove container
 ```
 
-#### [`scripts/setup.sh`](scripts/setup.sh)
+#### [`devcontainerctl/setup.sh`](../devcontainerctl/setup.sh)
 One-time setup script that configures your environment:
 
 **What it does:**
@@ -120,16 +120,17 @@ One-time setup script that configures your environment:
 - Creates symlink to `devcontainerctl` in `~/bin`
 - Adds `~/bin` to PATH in `~/.bashrc`
 - Configures daily cron job (8:00 AM) to sync images using `devcontainerctl sync`
+- Installs VS Code remote extensions for devcontainer enablement
 
 **Usage:**
 ```bash
 # Extract scripts from container first
 podman run --rm -v $HOME:$HOME -w $HOME \
   ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp -r /opt/scripts $HOME/devcontainer-scripts
+  cp -r /opt/devcontainerctl $HOME/devcontainerctl
 
 # Run setup
-cd $HOME/devcontainer-scripts
+cd $HOME/devcontainerctl
 ./setup.sh
 ```
 
@@ -186,7 +187,7 @@ This keeps maintenance simple: update the default by editing a single line in [`
 │   ├── build-devcontainer.yml     # Dev container build workflow
 │   ├── build-publish-container.yml # Container publishing workflow
 │   └── update-vscode.yml          # VS Code version update workflow
-├── scripts/                       # User deployment scripts
+├── devcontainerctl/               # User deployment scripts
 │   ├── devcontainerctl            # Container management script
 │   └── setup.sh                   # One-time setup script
 ├── assets/                        # Documentation assets

@@ -15,10 +15,10 @@ ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
 # 2. Extract the setup scripts
 podman run --rm -v $HOME:$HOME -w $HOME \
   ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp -r /opt/scripts $HOME/devcontainer-scripts
+  cp -r /opt/devcontainerctl $HOME/devcontainerctl
 
 # 3. Run the one-time setup
-cd $HOME/devcontainer-scripts
+cd $HOME/devcontainerctl
 ./setup.sh
 
 # 4. Start your devcontainer
@@ -53,7 +53,7 @@ The devcontainer includes scripts that automate deployment and management in the
 After extracting the scripts (see Quick Start above), run the setup script:
 
 ```bash
-cd $HOME/devcontainer-scripts
+cd $HOME/devcontainerctl
 ./setup.sh
 ```
 

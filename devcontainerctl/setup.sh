@@ -11,15 +11,28 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}DevContainer Setup Script${NC}"
 echo "================================"
 
-# Define paths
+# Define files & paths
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 SCRIPT_SOURCE="$SCRIPT_DIR/devcontainerctl"
 SYMLINK_TARGET="$HOME/bin/devcontainerctl"
 CRON_COMMAND="0 8 * * * $SYMLINK_TARGET sync"
+EXTENSION_FILE="/safe_data/shared/vscode-extensions/ms-vscode-remote.remote-containers.vsix"
 
 # Check if source script exists
 if [ ! -f "$SCRIPT_SOURCE" ]; then
     echo -e "${RED}Error: Source script not found at $SCRIPT_SOURCE${NC}"
+    exit 1
+fi
+
+# Install VS Code remote containers extensions if code command is available
+if command -v code >/dev/null 2>&1; then
+    echo -e "${YELLOW}Installing VS Code remote containers extension...${NC}"
+    code --install-extension $EXTENSION_FILE || {
+        echo -e "${RED}Failed to install remote containers extension${NC}"
+        exit 1
+    }
+else
+    echo -e "${RED}VS Code command 'code' not found. Skipping extension installation.${NC}"
     exit 1
 fi
 
@@ -32,7 +45,7 @@ fi
 # Create symlink
 if [ -L "$SYMLINK_TARGET" ]; then
     echo -e "${YELLOW}Symlink already exists at $SYMLINK_TARGET${NC}"
-    echo "Removing old symlink..."
+    echo -e "${YELLOW}Removing old symlink...${NC}"
     rm "$SYMLINK_TARGET"
 fi
 
@@ -42,7 +55,7 @@ ln -s "$SCRIPT_SOURCE" "$SYMLINK_TARGET"
 # Make sure the source script is executable
 if [ ! -x "$SCRIPT_SOURCE" ]; then
     echo -e "${YELLOW}Warning: $SCRIPT_SOURCE is not executable${NC}"
-    echo "You may need to run: sudo chmod +x $SCRIPT_SOURCE"
+    echo -e "${YELLOW}You may need to run: sudo chmod +x $SCRIPT_SOURCE${NC}"
 fi
 
 # Add ~/bin to PATH if not already present
@@ -75,9 +88,9 @@ echo ""
 echo "================================"
 echo -e "${GREEN}Setup Complete!${NC}"
 echo ""
-echo "Verification:"
-echo "  Symlink: $(ls -la $SYMLINK_TARGET 2>/dev/null || echo 'Not found')"
-echo "  Cron job:"
-crontab -l | grep "devcontainerctl sync" || echo "  Not found"
+echo -e "${GREEN}Verification:${NC}"
+echo -e "${GREEN}  Symlink: $(ls -la $SYMLINK_TARGET 2>/dev/null || echo 'Not found')${NC}"
+echo -e "${GREEN}  Cron job:${NC}"
+crontab -l | grep "devcontainerctl sync" || echo -e "${GREEN}  Not found${NC}"
 echo ""
 echo -e "${YELLOW}Note: You may need to restart your shell or run 'source ~/.bashrc'${NC}"

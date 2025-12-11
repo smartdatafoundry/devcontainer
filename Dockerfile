@@ -6,26 +6,21 @@ ARG VSCODE_COMMIT=bf9252a2fb45be6893dd8870c0bf37e2e1766d61
 
 ENV VSCODE_COMMIT=${VSCODE_COMMIT}
 
-# Copy and run VS Code installation files
-COPY .devcontainer/vscode-init /opt/vscode-init
+# Copy custom scripts and installation files
+COPY .devcontainer /opt/.devcontainer
 
-# Copy Qwen settings
-COPY .devcontainer/qwen-settings.json /root/.qwen/settings.json
+# Copy devcontainerctl folder to /opt/devcontainerctl (accessible at runtime)
+COPY devcontainerctl /opt/devcontainerctl
 
-# Copy Codex config
-COPY .devcontainer/codex-config.toml /root/.codex/config.toml
-
-# Copy Continue Dev config
-COPY .devcontainer/continue-config.yaml /root/.continue/config.yaml
-COPY .devcontainer/continue.env /root/.continue/.env
-
-# Copy scripts folder to /opt/scripts (accessible at runtime)
-COPY scripts /opt/scripts
-
-RUN cd /opt/vscode-init \ 
-    && ./00-install-vscode-server.sh ${VSCODE_COMMIT} \
-    && ./01-install-extensions.sh ${VSCODE_COMMIT} \
-    && ./02-download-extensions.sh
+# Run VS Code installation files & copy configurations
+RUN cd /opt/.devcontainer/vscode-init \ 
+    && /opt/.devcontainer/vscode-init/00-install-vscode-server.sh ${VSCODE_COMMIT} \
+    && /opt/.devcontainer/vscode-init/01-install-extensions.sh ${VSCODE_COMMIT} \
+    && /opt/.devcontainer/vscode-init/02-download-extensions.sh /opt/vscode-extensions \
+    && mkdir -p /root/.qwen && cp /opt/.devcontainer/qwen-settings.json /root/.qwen/settings.json \
+    && mkdir -p /root/.codex && cp /opt/.devcontainer/codex-config.toml /root/.codex/config.toml \
+    && mkdir -p /root/.continue && cp /opt/.devcontainer/continue-config.yaml /root/.continue/config.yaml \
+    && cp /opt/.devcontainer/continue.env /root/.continue/.env
 
 WORKDIR /workspace
 

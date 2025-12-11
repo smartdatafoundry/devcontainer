@@ -10,7 +10,7 @@ set -e
 # of the extension and its functionality gets inherited by devcontainers.
 
 EXTENSIONS_FILE="extensions-to-download.txt"
-DOWNLOAD_DIR="/opt/vscode-extensions"
+DOWNLOAD_DIR=${1:-"/opt/vscode-extensions"}
 SUCCESSFUL_DOWNLOADS=()
 
 mkdir -p "${DOWNLOAD_DIR}"
