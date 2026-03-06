@@ -144,7 +144,7 @@ jobs:
       # Using the custom Trivy Security Scan action from this repository
       - name: Security Scan
         id: security-scan
-        uses: smartdatafoundry/trivy-security-scan@v1.0.0
+        uses: smartdatafoundry/trivy-security-scan@v1.0.1
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           registry: ${{ env.REGISTRY }}
