@@ -69,7 +69,7 @@ jobs:
 
       - name: Security Scan (Trivy)
         id: security-scan
-        uses: smartdatafoundry/trivy-security-scan@v1.0.0
+        uses: smartdatafoundry/trivy-security-scan@v1.0.1
         with:
           image-ref: ${{ steps.first-tag.outputs.tag }}
           registry: ghcr.io
