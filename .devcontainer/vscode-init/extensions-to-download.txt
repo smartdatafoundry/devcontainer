@@ -11,3 +11,4 @@ ms-toolsai.jupyter-keymap
 openai.chatgpt
 qwenlm.qwen-code-vscode-ide-companion
 REditorSupport.r-syntax
+marimo-team.vscode-marimo

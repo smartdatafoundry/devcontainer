@@ -4,13 +4,13 @@
 charliermarsh.ruff
 DavidAnson.vscode-markdownlint
 eamodio.gitlens
-marimo-team.vscode-marimo
+#marimo-team.vscode-marimo
 mechatroner.rainbow-csv
 ms-ossdata.vscode-pgsql --pre-release
 ms-python.black-formatter
 ms-toolsai.datawrangler
 ms-toolsai.jupyter
 #openai.chatgpt
-qwenlm.qwen-code-vscode-ide-companion
+#qwenlm.qwen-code-vscode-ide-companion
 REditorSupport.r
 yzhang.markdown-all-in-one

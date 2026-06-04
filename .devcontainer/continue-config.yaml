@@ -1,36 +1,18 @@
-name: Local Config
+%YAML 1.1
+--- 
+name: Local Assistant
 version: 1.0.0
 schema: v1
 models:
 
-- name: Qwen3-Coder-30B-A3B-Instruct
-  provider: openai
-  apiBase: ${{ secrets.OPENAI_BASE_URL }}
-  apiKey: ${{ secrets.OPENAI_API_KEY }}
-  model: qwen3-coder:30b
-  roles:
-    - chat
-    - edit
-    - apply
-    - autocomplete
-  capabilities:
-    - tool use
-
-- name: nomic-embed-text
-  provider: openai
-  apiBase: ${{ secrets.OPENAI_BASE_URL }}
-  apiKey: ${{ secrets.OPENAI_API_KEY }}
-  model: nomic-embed-text:v1.5
-  roles:
-    - embed
-
-# - name: Autodetect
-#   provider: ollama
-#   apiBase: http://localhost:11434
-#   model: AUTODETECT
-#   roles:
-#     - chat
-#     - edit
-#     - apply
-#     - rerank
-#     - autocomplete
+  - name: Autodetect
+    provider: ollama
+    apiBase: ${{ secrets.OPENAI_BASE_URL }}
+    apikey: ${{ secrets.OPENAI_API_KEY }}
+    model: AUTODETECT
+    roles:
+      - chat
+      - edit
+      - apply
+      - rerank
+      - autocomplete
