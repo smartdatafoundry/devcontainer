@@ -12,3 +12,4 @@ openai.chatgpt
 qwenlm.qwen-code-vscode-ide-companion
 REditorSupport.r-syntax
 marimo-team.vscode-marimo
+pharndt.node-extra-ca-certs-vscode
