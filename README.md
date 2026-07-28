@@ -4,47 +4,119 @@
 
 # devcontainer
 
-Development container focused on Python (with first-class R support) providing a reproducible, batteries‑included environment. It ships with the VS Code Dev Containers extension assets, curated tooling, and a consistent tagging strategy for deterministic rebuilds.
-
-## Table of Contents
-1. Published Container
-2. Quick Start
-3. Using in SDF TRE
-4. Documentation
-5. What's Included
-6. R Language Support
-7. VS Code Server
-8. Adding Extensions
-9. Automated Builds & Tag Strategy
-10. Contributing
-11. License
+A pre-built container image designed for use with the [VS Code Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) inside the SDF Trusted Research Environment. It gives researchers a full, self-contained VS Code development experience — with a curated set of tools, languages, and extensions baked in — without depending on what the TRE host system provides.
 
 [![Build and Publish Dev Container](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml/badge.svg)](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml)
+
+## Table of Contents
+- [devcontainer](#devcontainer)
+  - [Table of Contents](#table-of-contents)
+  - [💡 Why a Dev Container?](#-why-a-dev-container)
+  - [📦 Published Container](#-published-container)
+  - [🚀 Quick Start in the SDF TRE](#-quick-start-in-the-sdf-tre)
+    - [Step 1 — Pull the image and set up auto-update](#step-1--pull-the-image-and-set-up-auto-update)
+    - [Step 2 — Open your project in VS Code](#step-2--open-your-project-in-vs-code)
+  - [🔧 Using in Other Environments](#-using-in-other-environments)
+    - [Using the published image directly](#using-the-published-image-directly)
+    - [Using this repository directly](#using-this-repository-directly)
+  - [📚 Documentation](#-documentation)
+  - [🛠️ What's Included](#️-whats-included)
+  - [📊 R Language Support](#-r-language-support)
+  - [⚙️ VS Code Server](#️-vs-code-server)
+  - [Adding New Extensions](#adding-new-extensions)
+  - [🔄 Automated Builds \& Tag Strategy](#-automated-builds--tag-strategy)
+    - [Build Workflow](#build-workflow)
+    - [VS Code Auto-Update Workflow](#vs-code-auto-update-workflow)
+  - [🤝 Contributing \& License](#-contributing--license)
+
+---
+
+## 💡 Why a Dev Container?
+
+The SDF TRE is a controlled environment where the host system's software stack is managed centrally and may not include the languages, tools, or VS Code extensions your project needs. Rather than negotiating host-level changes, this container provides a complete, self-describing development environment that VS Code's Dev Containers extension loads directly.
+
+When you open a project that references this image, VS Code connects to the running container and executes everything — terminal sessions, language servers, linters, debuggers, and extensions — inside it. From your perspective the experience is identical to working locally; from the TRE's perspective you are running a single, auditable container image.
+
+This approach gives you:
+
+- **Freedom from host limitations** — Python, R, Quarto, Marimo, Zsh, and all required dev tools are inside the container, not sourced from the host.
+- **Controlled extension delivery** — VS Code extensions are pre-installed in the image at build time. There is no need for outbound Marketplace access at runtime, which is essential in a network-restricted environment.
+- **Granular environment control** — Pin the exact container image tag (down to the VS Code Server commit and container build SHA) to reproduce a known-good environment across any number of users or sessions.
+- **Instant onboarding** — New researchers pull one image and open their project; VS Code handles the rest automatically.
+
+---
 
 ## 📦 Published Container
 
 Built and published automatically to GitHub Container Registry (GHCR):
 
-* **Registry**: `ghcr.io`
-* **Image**: `ghcr.io/smartdatafoundry/devcontainer`
-* **Tag Families**:
-  * `latest` – Most recent stable main build
-  * `main` – Moving pointer to HEAD of main
-  * `main-<branch-sha>` – Immutable build for a specific main commit
-  * `pr-<number>` – Ephemeral preview for a pull request
-  * `vscode-<vscode-sha>` – Locks VS Code Server version (container content may still move)
-  * `vscode-<vscode-sha>-<branch-sha>` – Fully reproducible (VS Code Server + container commit)
+- **Registry**: `ghcr.io`
+- **Image**: `ghcr.io/smartdatafoundry/devcontainer`
+- **Tag Families**:
+  - `latest` – Most recent stable main build
+  - `main-<branch-sha>` – Immutable snapshot of a specific main commit
+  - `pr-<number>` – Ephemeral preview for a pull request
+  - `vscode-<vscode-sha>` – Locks the VS Code Server version
+  - `vscode-<vscode-sha>-<branch-sha>` – Fully reproducible (VS Code Server + container commit)
 
-Recommended:
-* Daily development: `latest`
-* CI / Reproducibility: `vscode-<vscode-sha>-<branch-sha>`
-* VS Code Server pin only: `vscode-<vscode-sha>`
+| Need | Tag |
+|------|-----|
+| Stable rolling | `latest` |
+| Immutable snapshot | `main-<sha>` |
+| Test a PR | `pr-<number>` |
+| Pin VS Code Server only | `vscode-<vscode-sha>` |
+| Full reproducibility | `vscode-<vscode-sha>-<branch-sha>` |
 
-## 🚀 Quick Start
+---
 
-### Using the Published Container
+## 🚀 Quick Start in the SDF TRE
 
-Add this to your `.devcontainer/devcontainer.json`:
+### Step 1 — Pull the image and set up auto-update
+
+```bash
+# Pull the container image
+ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
+
+# Extract the bundled management scripts
+podman run --rm -v $HOME:$HOME -w $HOME \
+  ghcr.io/smartdatafoundry/devcontainer:latest \
+  cp -r /opt/devcontainerctl $HOME/devcontainerctl
+
+# One-time setup: adds devcontainerctl to PATH and configures daily auto-update
+cd $HOME/devcontainerctl
+./setup.sh
+```
+
+The setup script configures a daily cron job (8:00 AM) so your image stays current automatically. To sync manually at any time:
+
+```bash
+devcontainerctl sync
+```
+
+### Step 2 — Open your project in VS Code
+
+Add a `devcontainer.json` to your project at `.devcontainer/devcontainer.json`:
+
+```json
+{
+  "name": "My Project",
+  "image": "ghcr.io/smartdatafoundry/devcontainer:latest"
+}
+```
+
+Open the project folder in VS Code. The Dev Containers extension will prompt **"Reopen in Container"** — click it, or use the Command Palette (`Ctrl+Shift+P`) → **Dev Containers: Reopen in Container**.
+
+VS Code will attach to the container and your workspace, terminal, extensions, and language tooling will all run inside it.
+
+For detailed TRE-specific instructions, see [docs/SDF_TRE_SETUP.md](docs/SDF_TRE_SETUP.md).
+
+---
+
+## 🔧 Using in Other Environments
+
+### Using the published image directly
+
+Add a `devcontainer.json` to any project:
 
 ```json
 {
@@ -53,110 +125,89 @@ Add this to your `.devcontainer/devcontainer.json`:
 }
 ```
 
-### Using in SDF Trusted Research Environment
-
-#### Quick Setup with Included Scripts (Recommended)
-
-The devcontainer includes setup scripts for easy deployment in the SDF TRE:
-
-```bash
-# 1. Pull the container image
-ces-pull a a ghcr.io/smartdatafoundry/devcontainer:latest
-
-# 2. Extract the setup scripts
-podman run --rm -v $HOME:$HOME -w $HOME \
-  ghcr.io/smartdatafoundry/devcontainer:latest \
-  cp -r /opt/devcontainerctl $HOME/devcontainerctl
-
-# 3. Run the setup script (one-time setup)
-cd $HOME/devcontainerctl
-./setup.sh
-
-# 4. Start your devcontainer
-devcontainerctl start
-```
-
-The setup script will:
-- Create a symlink to `devcontainerctl` in `~/bin`
-- Add `~/bin` to your PATH
-- Configure a daily cron job (8:00 AM) to update your container with the latest version
-
-Available `devcontainerctl` commands:
-- `devcontainerctl start` - Start container with existing image
-- `devcontainerctl stop` - Stop the container
-- `devcontainerctl restart` - Restart the container
-- `devcontainerctl status` - Check container status
-- `devcontainerctl sync` - Update the container image
-- `devcontainerctl update` - Update and restart with new image
-- `devcontainerctl remove` - Stop and remove the container
-
-#### Manual Setup
-
-For detailed manual setup instructions, see the **[SDF TRE Setup Guide](docs/SDF_TRE_SETUP.md)**.
-
-### Using This Repository Directly
+### Using this repository directly
 
 1. Clone this repository
 2. Open in VS Code
-3. Select "Reopen in Container" when prompted
+3. Select **"Reopen in Container"** when prompted
+
+---
 
 ## 📚 Documentation
 
 | Topic | Reference |
 |-------|-----------|
-| SDF TRE usage | [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md) |
-| Full container internals | [`docs/DEVCONTAINER.md`](docs/DEVCONTAINER.md) |
-| Setup scripts | [`devcontainerctl/`](devcontainerctl/) directory |
-| Reusable publish workflow | [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md) |
+| SDF TRE setup | [docs/SDF_TRE_SETUP.md](docs/SDF_TRE_SETUP.md) |
+| Container internals | [docs/DEVCONTAINER.md](docs/DEVCONTAINER.md) |
+| Reusable publish workflow | [docs/BUILD_PUBLISH_CONTAINER.md](docs/BUILD_PUBLISH_CONTAINER.md) |
+| VS Code Auto-Update | [docs/VSCODE_AUTO_UPDATE.md](docs/VSCODE_AUTO_UPDATE.md) |
 | Dev Container Specification | https://containers.dev |
+| VS Code Dev Containers docs | https://code.visualstudio.com/docs/devcontainers/containers |
+
+---
 
 ## 🛠️ What's Included
 
-- **Base**: Ubuntu 24.04 (Noble) via Microsoft's devcontainers base image
-- **Python**: System Python with development tools (via devcontainer feature)
-- **R**: Full R language support with development tools (via Rocker Project devcontainer feature)
-- **Git**: Latest version with configuration support
-- **Shell**: Zsh with Oh My Zsh (via common-utils feature)
-- **Quarto**: Document publishing platform (latest version)
-- **Marimo**: Markdown presentation tool, alternative to Jupyter Notebooks
-- **User Setup Scripts**: Automated deployment and management tools ([`devcontainerctl/`](devcontainerctl/))
-- **VS Code Extensions (curated)**:
-  - Continue (AI assistant)
-  - Black (Python formatting)
-  - Jupyter
-  - Marimo
-  - Markdown All in One
-  - Rainbow CSV
-  - (See [`.devcontainer/vscode-init/extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt) for authoritative list)
-- **VS Code Server**: Pre-installed for immediate development
+| Category | Detail |
+|----------|--------|
+| **Base** | Ubuntu 24.04 (Noble) via Microsoft's devcontainers base image |
+| **Python** | System Python with dev tools (via devcontainer feature) |
+| **R** | Full R language support (via Rocker Project devcontainer feature) |
+| **Git** | Latest version with configuration support |
+| **Shell** | Zsh with Oh My Zsh (via common-utils feature) |
+| **Quarto** | Document publishing platform (latest) |
+| **Marimo** | Reactive notebook environment, alternative to Jupyter |
+| **VS Code Server** | Pre-installed — no Marketplace access needed at runtime |
+| **Extensions** | Curated set pre-installed in the image (see below) |
+
+**Pre-installed VS Code Extensions:**
+- Continue (AI assistant)
+- Black (Python formatter)
+- Jupyter
+- Marimo
+- Markdown All in One
+- Rainbow CSV
+
+See [`.devcontainer/vscode-init/extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt) for the authoritative list.
+
+---
 
 ## 📊 R Language Support
 
-This dev container includes comprehensive R language support through the [Rocker Project's devcontainer features](https://github.com/rocker-org/devcontainer-features). The R feature provides:
+Provided via the [Rocker Project's devcontainer features](https://github.com/rocker-org/devcontainer-features):
 
-### Features Available
-- **R Installation**: Latest R version via apt package manager
-- **Development Tools**: devtools, renv for package management
-- **IDE Integration**: 
-  - languageserver package for VS Code R extension support
-  - httpgd package for interactive graphics
-  - rmarkdown for document generation
-- **Jupyter Integration**: R kernel for Jupyter notebooks
-- **Interactive Console**: radian (enhanced R console with syntax highlighting)
-- **Debugging Support**: vscDebugger package for VS Code R debugging
+- **R** via apt package manager
+- **devtools** and **renv** for package management
+- **languageserver** for VS Code R extension support
+- **httpgd** for interactive graphics
+- **rmarkdown** for document generation
+- **R kernel** for Jupyter notebooks
+- **radian** — enhanced interactive R console
+- **vscDebugger** for VS Code R debugging
+
+---
 
 ## ⚙️ VS Code Server
 
-Pre-installed. Pin a version using the tag families described above or via build arg `VSCODE_COMMIT` (default: `7d842fb85a0275a4a8e4d7e040d2625abbf7f084`). For environment-specific considerations (e.g. TRE) see [`docs/SDF_TRE_SETUP.md`](docs/SDF_TRE_SETUP.md).
+The VS Code Server is pre-installed at image build time using a specific commit hash, ensuring that the server version inside the container matches the VS Code client version used in the TRE. This eliminates the version negotiation that normally requires internet access when a container first starts.
+
+Pin a specific version via the `VSCODE_COMMIT` build argument, or use the `vscode-<vscode-sha>` tag families to select an image built against a known server version.
+
+See [docs/VSCODE_AUTO_UPDATE.md](docs/VSCODE_AUTO_UPDATE.md) for the automated update workflow.
+
+---
 
 ## Adding New Extensions
-To add new VS Code extensions to the container, follow these steps:
-1. Open the appropriate file in [`.devcontainer/vscode-init/`](.devcontainer/vscode-init/):
-   - [`extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt) for extensions to install directly
-   - [`extensions-to-download.txt`](.devcontainer/vscode-init/extensions-to-download.txt) for extensions that you want to be downloaded
-2. Add the identifier of the desired extension in the format `publisher.extensionName` on a new line.
-3. Save the changes to the extension file.
-4. Commit and push the changes to your repository to trigger the build workflow with the updated extensions
+
+Extensions are baked into the image at build time, making them available without any runtime network access.
+
+1. Open the relevant file in [`.devcontainer/vscode-init/`](.devcontainer/vscode-init/):
+   - [`extensions-to-install.txt`](.devcontainer/vscode-init/extensions-to-install.txt) — installed into the VS Code Server
+   - [`extensions-to-download.txt`](.devcontainer/vscode-init/extensions-to-download.txt) — downloaded to `/opt/vscode-extensions` for manual installation
+2. Add the extension identifier (`publisher.extensionName`) on a new line.
+3. Commit and push — the build workflow will produce a new image with the extension included.
+
+---
 
 ## 🔄 Automated Builds & Tag Strategy
 
@@ -164,29 +215,16 @@ To add new VS Code extensions to the container, follow these steps:
 
 Workflow: [`.github/workflows/build-devcontainer.yml`](.github/workflows/build-devcontainer.yml)
 
-Triggers:
-* Pull Requests touching devcontainer/workflow files → build + `pr-<number>` tag
-* Manual dispatch (with required `vscode_commit` input) → publish full tag set
+**Triggers:**
+- Pull Requests touching devcontainer/workflow files → build only, tagged `pr-<number>`
+- Manual dispatch (supply `vscode_commit`) → full publish
 
-Outputs per production run:
-* `latest`, `main`, `main-<branch-sha>`
-* `vscode-<vscode-sha>`, `vscode-<vscode-sha>-<branch-sha>`
+**Outputs per production run:** `latest`, `main`, `main-<branch-sha>`, `vscode-<vscode-sha>`, `vscode-<vscode-sha>-<branch-sha>`
 
-Manual build steps:
-1. Open Actions → Build and Publish Dev Container
-2. Run workflow, supplying VS Code Server commit hash
-3. Await completion & verify tags on GHCR package page
-
-Tag usage quick reference:
-| Need | Tag |
-|------|-----|
-| Stable rolling | `latest` |
-| Immutable main snapshot | `main-<sha>` |
-| Test PR | `pr-<number>` |
-| Pin VS Code Server only | `vscode-<vscode-sha>` |
-| Full reproducibility | `vscode-<vscode-sha>-<sha>` |
-
-Reusable generic Docker workflow documentation: see [`docs/BUILD_PUBLISH_CONTAINER.md`](docs/BUILD_PUBLISH_CONTAINER.md).
+**Manual build steps:**
+1. Open Actions → **Build and Publish Dev Container**
+2. Run workflow, supplying the VS Code Server commit hash
+3. Verify tags on the GHCR package page
 
 ### VS Code Auto-Update Workflow
 
@@ -194,20 +232,13 @@ Reusable generic Docker workflow documentation: see [`docs/BUILD_PUBLISH_CONTAIN
 
 Workflow: [`.github/workflows/update-vscode.yml`](.github/workflows/update-vscode.yml)
 
-An automated workflow that:
-* Runs daily at 2:00 AM UTC to check for new VS Code releases
-* Compares the latest stable VS Code commit hash with the current version in the Dockerfile
-* Automatically creates a PR when a new version is available
-* Enables auto-merge to update the container once all checks pass
-
-This ensures the devcontainer stays up-to-date with the latest VS Code releases without manual intervention.
-
-For detailed configuration and usage information, see [`docs/VSCODE_AUTO_UPDATE.md`](docs/VSCODE_AUTO_UPDATE.md).
+Runs daily at 2:00 AM UTC, compares the latest stable VS Code commit hash against the Dockerfile, and automatically opens a PR (with auto-merge enabled) when a new version is available.
 
 ---
+
 ## 🤝 Contributing & License
 
-Contribution workflow is standard GitHub Flow. See section above plus open issues for opportunities.
+Contribution workflow is standard GitHub Flow. See open issues for opportunities.
 
 License: [MIT](LICENSE)
 
