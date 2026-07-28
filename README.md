@@ -4,7 +4,7 @@
 
 # devcontainer
 
-A pre-built container image designed for use with the [VS Code Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) inside the SDF Trusted Research Environment. It gives researchers a full, self-contained VS Code development experience — with a curated set of tools, languages, and extensions baked in — without depending on what the TRE host system provides.
+The SDF devcontainer is a pre-built image that enables delivery of complete, modern software environments to researchers working inside the Trusted Research Environment. By targeting VS Code's [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) as the integration point, it removes the dependency on what the TRE host system provides and instead provides a curated set of languages, frameworks, tooling, and VS Code extensions — packaged once and made consistently available to every user. Whether a project requires Python data science libraries, R statistical tooling, or document publishing frameworks like Quarto and Marimo, the environment is defined in code, versioned, and ready to use the moment a researcher opens their project.
 
 [![Build and Publish Dev Container](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml/badge.svg)](https://github.com/smartdatafoundry/devcontainer/actions/workflows/build-devcontainer.yml)
 
