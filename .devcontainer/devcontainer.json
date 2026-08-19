@@ -49,7 +49,12 @@
 			"clean_ppas": true,
 			"preserve_apt_list": true,
 			"packages": "busybox,curl,fzf,htop,postgresql-client"
-		}
+		},
+
+		// Apache Spark is an open-source cluster-computing framework.
+		// Spark provides an interface for programming entire clusters with
+		// implicit data parallelism and fault-tolerance.
+		 "ghcr.io/devcontainers-extra/features/spark-sdkman:2": {}
 
 		// Example of adding R packages via apt during build:
 		// Uncomment the following lines to install the 'curl' package for R
