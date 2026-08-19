@@ -14,3 +14,4 @@ ms-toolsai.jupyter
 #qwenlm.qwen-code-vscode-ide-companion
 REditorSupport.r
 yzhang.markdown-all-in-one
+mshdinsight.azure-hdinsight
